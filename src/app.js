@@ -27,8 +27,18 @@ app.use('/api', routes);
 if (process.env.SWAGGER_ENABLED === 'true') {
     const swaggerUi = require('swagger-ui-express');
     const swaggerSpec = require('./config/swagger');
+    
+    // UI de Swagger
     app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+    
+    // JSON de Swagger para importar en Postman
+    app.get('/api-docs.json', (req, res) => {
+        res.setHeader('Content-Type', 'application/json');
+        res.send(swaggerSpec);
+    });
+    
     console.log('Swagger docs available at http://localhost:3000/api-docs');
+    console.log('Swagger JSON available at http://localhost:3000/api-docs.json');
 }
 
 // Error handling middleware
