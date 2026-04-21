@@ -13,6 +13,14 @@ async function startServer() {
         await sequelize.sync({ alter: true });
         console.log('Modelos sincronizados correctamente.');
 
+        // Seeding de Roles iniciales
+        const Rol = require('./models/Rol');
+        const roles = ['ADMIN', 'USER'];
+        for (const nombre of roles) {
+            await Rol.findOrCreate({ where: { nombre } });
+        }
+        console.log('Roles inicializados.');
+
         app.listen(PORT, () => {
             console.log(`Servidor corriendo en el puerto ${PORT}`);
         });

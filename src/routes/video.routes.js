@@ -2,6 +2,9 @@ const express = require('express');
 const router = express.Router();
 const videoController = require('../controllers/video.controller');
 const upload = require('../config/multer');
+const authMiddleware = require('../middlewares/auth.middleware');
+const roleMiddleware = require('../middlewares/role.middleware');
+
 
 /**
  * @swagger
@@ -44,7 +47,7 @@ const upload = require('../config/multer');
  *       200:
  *         description: Lista de videos
  */
-router.get('/', videoController.getAll);
+router.get('/', authMiddleware, videoController.getAll);
 
 /**
  * @swagger
@@ -70,7 +73,7 @@ router.get('/', videoController.getAll);
  *       201:
  *         description: Video subido con éxito
  */
-router.post('/', upload.single('video'), videoController.create);
+router.post('/', [authMiddleware, roleMiddleware(['ADMIN', 'USER']), upload.single('video')], videoController.create);
 
 /**
  * @swagger
@@ -89,6 +92,6 @@ router.post('/', upload.single('video'), videoController.create);
  *       200:
  *         description: Video eliminado
  */
-router.delete('/:id', videoController.delete);
+router.delete('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], videoController.delete);
 
 module.exports = router;

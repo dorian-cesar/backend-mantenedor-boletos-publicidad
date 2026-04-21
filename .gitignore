@@ -30,3 +30,7 @@ build/
 # Logs
 logs/
 *.log
+
+# Scripts
+scripts/
+postman_collection.json

@@ -1,6 +1,9 @@
 const express = require('express');
 const router = express.Router();
 const totemController = require('../controllers/totem.controller');
+const authMiddleware = require('../middlewares/auth.middleware');
+const roleMiddleware = require('../middlewares/role.middleware');
+
 
 /**
  * @swagger
@@ -40,7 +43,7 @@ const totemController = require('../controllers/totem.controller');
  *       200:
  *         description: Lista de totems
  */
-router.get('/', totemController.getAll);
+router.get('/', authMiddleware, totemController.getAll);
 
 /**
  * @swagger
@@ -68,7 +71,7 @@ router.get('/', totemController.getAll);
  *       201:
  *         description: Totem creado
  */
-router.post('/', totemController.create);
+router.post('/', [authMiddleware, roleMiddleware(['ADMIN'])], totemController.create);
 
 /**
  * @swagger
@@ -103,7 +106,7 @@ router.post('/', totemController.create);
  *       200:
  *         description: Totem actualizado
  */
-router.put('/:id', totemController.update);
+router.put('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], totemController.update);
 
 /**
  * @swagger
@@ -122,6 +125,6 @@ router.put('/:id', totemController.update);
  *       200:
  *         description: Totem eliminado
  */
-router.delete('/:id', totemController.delete);
+router.delete('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], totemController.delete);
 
 module.exports = router;

@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 const empresaController = require('../controllers/empresa.controller');
+const authMiddleware = require('../middlewares/auth.middleware');
+const roleMiddleware = require('../middlewares/role.middleware');
 
 /**
  * @swagger
@@ -50,7 +52,7 @@ const empresaController = require('../controllers/empresa.controller');
  *               items:
  *                 $ref: '#/components/schemas/Empresa'
  */
-router.get('/', empresaController.getAll);
+router.get('/', authMiddleware, empresaController.getAll);
 
 /**
  * @swagger
@@ -75,7 +77,7 @@ router.get('/', empresaController.getAll);
  *       404:
  *         description: Empresa no encontrada
  */
-router.get('/:id', empresaController.getById);
+router.get('/:id', authMiddleware, empresaController.getById);
 
 /**
  * @swagger
@@ -95,7 +97,7 @@ router.get('/:id', empresaController.getById);
  *       400:
  *         description: Error en la solicitud
  */
-router.post('/', empresaController.create);
+router.post('/', [authMiddleware, roleMiddleware(['ADMIN'])], empresaController.create);
 
 /**
  * @swagger
@@ -122,7 +124,7 @@ router.post('/', empresaController.create);
  *       404:
  *         description: Empresa no encontrada
  */
-router.put('/:id', empresaController.update);
+router.put('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], empresaController.update);
 
 /**
  * @swagger
@@ -143,6 +145,6 @@ router.put('/:id', empresaController.update);
  *       404:
  *         description: Empresa no encontrada
  */
-router.delete('/:id', empresaController.delete);
+router.delete('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], empresaController.delete);
 
 module.exports = router;

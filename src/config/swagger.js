@@ -14,6 +14,20 @@ const options = {
                 description: 'Servidor Local',
             },
         ],
+        components: {
+            securitySchemes: {
+                bearerAuth: {
+                    type: 'http',
+                    scheme: 'bearer',
+                    bearerFormat: 'JWT',
+                },
+            },
+        },
+        security: [
+            {
+                bearerAuth: [],
+            },
+        ],
     },
     apis: ['./src/routes/*.js'], // Ruta a los archivos con anotaciones
 };
