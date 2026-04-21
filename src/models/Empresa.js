@@ -1,0 +1,23 @@
+const { DataTypes } = require('sequelize');
+const sequelize = require('../config/database');
+
+const Empresa = sequelize.define('Empresa', {
+    id: {
+        type: DataTypes.UUID,
+        defaultValue: DataTypes.UUIDV4,
+        primaryKey: true
+    },
+    nombre: {
+        type: DataTypes.STRING,
+        allowNull: false
+    },
+    status: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: true
+    }
+}, {
+    tableName: 'empresas',
+    paranoid: true // Soft delete
+});
+
+module.exports = Empresa;
