@@ -8,7 +8,10 @@ const routes = require('./routes');
 const app = express();
 
 // Middlewares
-app.use(helmet());
+app.use(helmet({
+    crossOriginEmbedderPolicy: { policy: "require-corp" },
+    crossOriginOpenerPolicy: { policy: "same-origin" },
+}));
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
