@@ -1,0 +1,12 @@
+const express = require('express');
+const router = express.Router();
+
+const empresaRoutes = require('./empresa.routes');
+const videoRoutes = require('./video.routes');
+const totemRoutes = require('./totem.routes');
+
+router.use('/empresas', empresaRoutes);
+router.use('/videos', videoRoutes);
+router.use('/totems', totemRoutes);
+
+module.exports = router;
