@@ -4,6 +4,7 @@ const morgan = require('morgan');
 const helmet = require('helmet');
 const path = require('path');
 const routes = require('./routes');
+const apiKeyMiddleware = require('./middlewares/apiKey.middleware');
 
 const app = express();
 
@@ -15,6 +16,7 @@ app.use(helmet({
 app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
+app.use(apiKeyMiddleware);
 app.use(express.urlencoded({ extended: true }));
 
 // Static files (for uploaded videos)

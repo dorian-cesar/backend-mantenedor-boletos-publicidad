@@ -21,12 +21,21 @@ const options = {
                     scheme: 'bearer',
                     bearerFormat: 'JWT',
                 },
+                apiKeyAuth: {
+                    type: 'apiKey',
+                    in: 'header',
+                    name: 'x-api-key',
+                    description: 'API Key para acceso global a los endpoints'
+                }
             },
         },
         security: [
             {
-                bearerAuth: [],
+                apiKeyAuth: []
             },
+            {
+                bearerAuth: []
+            }
         ],
     },
     apis: ['./src/routes/*.js'], // Ruta a los archivos con anotaciones
