@@ -62,12 +62,20 @@ exports.update = async (req, res) => {
             return res.status(400).json({ message: 'Se requiere totem_id para una API Key de tipo TOTEM' });
         }
 
-        await apiKey.update({
-            description,
-            status,
-            tipo,
-            totem_id: tipo === 'TOTEM' ? totem_id : (tipo === 'PLATAFORMA' ? null : apiKey.totem_id)
-        });
+        const updateData = {};
+        if (description !== undefined) updateData.description = description;
+        if (status !== undefined) updateData.status = status;
+        if (tipo !== undefined) updateData.tipo = tipo;
+        
+        if (tipo === 'TOTEM') {
+            updateData.totem_id = totem_id;
+        } else if (tipo === 'PLATAFORMA') {
+            updateData.totem_id = null;
+        } else if (totem_id !== undefined) {
+            updateData.totem_id = totem_id;
+        }
+
+        await apiKey.update(updateData);
 
         res.json(apiKey);
     } catch (error) {

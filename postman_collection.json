@@ -1,7 +1,7 @@
 {
   "item": [
     {
-      "id": "9069ddc5-4aaa-4968-b2f4-316a186af96b",
+      "id": "d276f8c2-f110-47d7-b7e6-7a3adf7cf7a1",
       "name": "ApiKeys",
       "description": {
         "content": "Gestión de API Keys para el sistema",
@@ -9,7 +9,7 @@
       },
       "item": [
         {
-          "id": "b44af404-4b2b-4657-8456-53a66330f8d5",
+          "id": "4b355d4f-a2f0-4d4a-88d6-54941072c153",
           "name": "Genera una nueva API Key (Solo Admin)",
           "request": {
             "name": "Genera una nueva API Key (Solo Admin)",
@@ -45,7 +45,7 @@
           },
           "response": [
             {
-              "id": "e7c7e0c2-2a78-409e-82e8-7888d598b09a",
+              "id": "069df481-f680-4928-a540-9b996058f886",
               "name": "API Key generada",
               "originalRequest": {
                 "url": {
@@ -99,7 +99,7 @@
           }
         },
         {
-          "id": "a844c963-03a3-4ebc-8706-5d8da7e07721",
+          "id": "3e00c585-07a0-4101-9889-5f27f08a4fff",
           "name": "Lista todas las API Keys (Solo Admin)",
           "request": {
             "name": "Lista todas las API Keys (Solo Admin)",
@@ -120,7 +120,7 @@
           },
           "response": [
             {
-              "id": "2c8d1f68-7a37-4ca9-b72a-20816c167a7e",
+              "id": "18c0926d-04f1-416f-b929-4ba1f5d89166",
               "name": "Lista de llaves",
               "originalRequest": {
                 "url": {
@@ -166,10 +166,10 @@
           }
         },
         {
-          "id": "c22a81e0-a518-44a5-9a89-e3f886d17464",
-          "name": "Actualiza una API Key (Solo Admin)",
+          "id": "9b0bcf7e-77f2-47c6-9eaf-140a1c65ecb4",
+          "name": "Actualiza parcialmente una API Key (Solo Admin)",
           "request": {
-            "name": "Actualiza una API Key (Solo Admin)",
+            "name": "Actualiza parcialmente una API Key (Solo Admin)",
             "description": {},
             "url": {
               "path": [
@@ -197,7 +197,7 @@
                 "value": "application/json"
               }
             ],
-            "method": "PUT",
+            "method": "PATCH",
             "auth": null,
             "body": {
               "mode": "raw",
@@ -211,7 +211,7 @@
           },
           "response": [
             {
-              "id": "411c61a8-b9c1-4aeb-a3d8-a388a45021cc",
+              "id": "e8dbb713-0b98-49ca-8b67-03aee498cac8",
               "name": "API Key actualizada",
               "originalRequest": {
                 "url": {
@@ -244,7 +244,7 @@
                     "value": "<API Key>"
                   }
                 ],
-                "method": "PUT",
+                "method": "PATCH",
                 "body": {
                   "mode": "raw",
                   "raw": "{\n  \"description\": \"<string>\",\n  \"status\": \"<boolean>\",\n  \"tipo\": \"<string>\",\n  \"totem_id\": \"<integer>\"\n}",
@@ -274,7 +274,7 @@
           }
         },
         {
-          "id": "b421717b-98bc-45d2-8b4b-0697881898b0",
+          "id": "0d992db3-8e28-44b9-8647-1f748863d65c",
           "name": "Elimina una API Key (Solo Admin)",
           "request": {
             "name": "Elimina una API Key (Solo Admin)",
@@ -304,7 +304,7 @@
           },
           "response": [
             {
-              "id": "6cf960e1-c24e-4322-abc5-662795726a89",
+              "id": "419296f2-2f3f-4797-bb44-5a95c009b8be",
               "name": "API Key eliminada",
               "originalRequest": {
                 "url": {
@@ -362,7 +362,7 @@
       "event": []
     },
     {
-      "id": "1f19366e-d938-4bbc-b82d-0ae40b4bc2ef",
+      "id": "40f28e71-3816-4258-ae99-ab1810445db3",
       "name": "Auth",
       "description": {
         "content": "Autenticación de usuarios",
@@ -370,7 +370,7 @@
       },
       "item": [
         {
-          "id": "2473ed2e-7407-42c9-9c31-d10ae51d8e30",
+          "id": "ab4dbfc5-c9e9-4149-95c4-c8255ecd6860",
           "name": "Registra un nuevo usuario",
           "request": {
             "name": "Registra un nuevo usuario",
@@ -407,7 +407,7 @@
           },
           "response": [
             {
-              "id": "f7ff0d93-620f-45e4-885f-c3232d061ae3",
+              "id": "1f23d522-e5f0-4478-a821-f0b0931bc07a",
               "name": "Usuario registrado",
               "originalRequest": {
                 "url": {
@@ -462,7 +462,7 @@
           }
         },
         {
-          "id": "00159f7a-38db-4adf-8e92-cc89d80ed3e3",
+          "id": "79edeabd-3abd-4527-badd-7b877759e9c9",
           "name": "Inicia sesión",
           "request": {
             "name": "Inicia sesión",
@@ -499,7 +499,7 @@
           },
           "response": [
             {
-              "id": "590405b2-557f-42d5-b6b8-565aa037089c",
+              "id": "45026a9e-171b-43e4-a455-1898036a863b",
               "name": "Token generado",
               "originalRequest": {
                 "url": {
@@ -554,7 +554,7 @@
           }
         },
         {
-          "id": "28193ce6-93c5-4575-87ac-af4c037e2ece",
+          "id": "91d9c27e-5025-4226-871d-943e5953a148",
           "name": "Obtiene todos los usuarios (Solo Admin)",
           "request": {
             "name": "Obtiene todos los usuarios (Solo Admin)",
@@ -576,7 +576,7 @@
           },
           "response": [
             {
-              "id": "8102112e-a38b-481c-802e-1b5318709809",
+              "id": "93eac263-5a2e-4164-a621-d103d197825f",
               "name": "Lista de usuarios",
               "originalRequest": {
                 "url": {
@@ -626,7 +626,7 @@
       "event": []
     },
     {
-      "id": "d0b39bd6-53ab-487f-80e1-50f8e20fc5dd",
+      "id": "3a210bb4-dc7f-432e-8e65-608afa94d274",
       "name": "Empresas",
       "description": {
         "content": "API para la gestión de empresas",
@@ -634,7 +634,7 @@
       },
       "item": [
         {
-          "id": "d7603e32-3209-416f-acc3-01add0139906",
+          "id": "17e59c73-c956-4ba9-8a87-842069d7a696",
           "name": "Obtiene todas las empresas",
           "request": {
             "name": "Obtiene todas las empresas",
@@ -661,7 +661,7 @@
           },
           "response": [
             {
-              "id": "06433051-a82c-4db2-847a-21222d80646b",
+              "id": "fa6f0986-56a9-444c-a3f3-b158598d05f0",
               "name": "Lista de empresas",
               "originalRequest": {
                 "url": {
@@ -711,7 +711,7 @@
           }
         },
         {
-          "id": "026b02f0-8104-4337-962a-fc9c946d67aa",
+          "id": "89f3e930-c2ed-4163-9fc7-7e514086a7f1",
           "name": "Crea una nueva empresa",
           "request": {
             "name": "Crea una nueva empresa",
@@ -747,7 +747,7 @@
           },
           "response": [
             {
-              "id": "2825b982-ba78-44a7-82fc-61caa7f19ecd",
+              "id": "d0437fe4-e017-4c3e-a1ab-7b745e91371c",
               "name": "Empresa creada",
               "originalRequest": {
                 "url": {
@@ -795,7 +795,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "bfcfd661-783d-4f10-8b3c-0e894f66488a",
+              "id": "8dba712a-2d01-42c5-a88c-7a853da7cc2b",
               "name": "Error en la solicitud",
               "originalRequest": {
                 "url": {
@@ -849,7 +849,7 @@
           }
         },
         {
-          "id": "1cf38bd7-4521-4f1e-90a0-5c693569434c",
+          "id": "d99e0f98-f382-4bde-b480-e50c57551f04",
           "name": "Obtiene una empresa por ID",
           "request": {
             "name": "Obtiene una empresa por ID",
@@ -885,7 +885,7 @@
           },
           "response": [
             {
-              "id": "2f3a173f-f038-49cb-97ef-b9338de5a849",
+              "id": "82d27dfb-bdbd-45af-81f8-4e884af5c374",
               "name": "Detalles de la empresa",
               "originalRequest": {
                 "url": {
@@ -938,7 +938,7 @@
               "_postman_previewlanguage": "json"
             },
             {
-              "id": "aa9b65da-99f0-46aa-bbb9-0d679267202c",
+              "id": "73d256c2-281c-42e0-9d9d-4a712d867d87",
               "name": "Empresa no encontrada",
               "originalRequest": {
                 "url": {
@@ -993,7 +993,7 @@
           }
         },
         {
-          "id": "6473f8c1-4d57-4391-ac54-e0314eddfcd4",
+          "id": "3176d0a3-4b4b-4cd6-b0fb-f2eb209b9358",
           "name": "Actualiza una empresa",
           "request": {
             "name": "Actualiza una empresa",
@@ -1038,7 +1038,7 @@
           },
           "response": [
             {
-              "id": "a98dab22-de2f-40fe-8a37-7e3c075b7694",
+              "id": "35be4eea-2c89-4605-b438-0628e1558d4c",
               "name": "Empresa actualizada",
               "originalRequest": {
                 "url": {
@@ -1095,7 +1095,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "effff12b-a133-4b6a-8820-949f3beae777",
+              "id": "45fc694b-4c06-4669-a0ad-6635942bbb9e",
               "name": "Empresa no encontrada",
               "originalRequest": {
                 "url": {
@@ -1158,7 +1158,7 @@
           }
         },
         {
-          "id": "88627f31-68c6-475c-98fb-76fd8d6fc6b6",
+          "id": "4f2df4b3-9517-4f46-8116-0ffe8c4b7661",
           "name": "Elimina una empresa (soft delete)",
           "request": {
             "name": "Elimina una empresa (soft delete)",
@@ -1188,7 +1188,7 @@
           },
           "response": [
             {
-              "id": "7d06f5a6-1d35-4f57-a0f7-7c88d10fa200",
+              "id": "ce9875a5-1654-462c-94cd-4af029ee74c1",
               "name": "Empresa eliminada",
               "originalRequest": {
                 "url": {
@@ -1237,7 +1237,7 @@
               "_postman_previewlanguage": "text"
             },
             {
-              "id": "7d57db99-8957-47fb-bf5b-b77f459daf57",
+              "id": "34bacd42-d24c-4338-8a56-6c021fa3b578",
               "name": "Empresa no encontrada",
               "originalRequest": {
                 "url": {
@@ -1295,7 +1295,7 @@
       "event": []
     },
     {
-      "id": "65c1a036-63d4-4604-928f-c9e8fab9929a",
+      "id": "efde8fe0-0399-43cc-a14c-6f1aa0a5be9b",
       "name": "Totems",
       "description": {
         "content": "API para la gestión de totems",
@@ -1303,7 +1303,7 @@
       },
       "item": [
         {
-          "id": "1bfcec82-3f24-48eb-9de3-191052dbc9d7",
+          "id": "1b9674af-d8bf-4a8f-84a7-dd8c0c5783ab",
           "name": "Obtiene todos los totems",
           "request": {
             "name": "Obtiene todos los totems",
@@ -1324,7 +1324,7 @@
           },
           "response": [
             {
-              "id": "5b2d9bdb-a80f-4bca-9b27-5bf4bf877f56",
+              "id": "398b9fea-e428-4df0-b2f2-3d98555501e7",
               "name": "Lista de totems",
               "originalRequest": {
                 "url": {
@@ -1370,7 +1370,7 @@
           }
         },
         {
-          "id": "03691fb5-b506-4741-8f09-e38f3cdd38dd",
+          "id": "3cddcfdc-0a2f-4f9e-a305-d2c1728db2f1",
           "name": "Crea un nuevo totem",
           "request": {
             "name": "Crea un nuevo totem",
@@ -1406,7 +1406,7 @@
           },
           "response": [
             {
-              "id": "d38e265c-259e-4932-90fc-ed6e395db5c6",
+              "id": "d7ddfa33-7a7f-43f3-83ed-6470a88041c2",
               "name": "Totem creado",
               "originalRequest": {
                 "url": {
@@ -1460,7 +1460,7 @@
           }
         },
         {
-          "id": "2f8784f3-a27e-41a1-bef4-2a5f1cae1698",
+          "id": "172f7d16-be42-4a1c-af38-9236f564229a",
           "name": "Obtiene un totem por ID",
           "request": {
             "name": "Obtiene un totem por ID",
@@ -1490,7 +1490,7 @@
           },
           "response": [
             {
-              "id": "386473c8-5fa9-4499-b80b-eadb13349341",
+              "id": "6d253737-10b7-4f2d-a507-bbba50f89abd",
               "name": "Detalles del totem",
               "originalRequest": {
                 "url": {
@@ -1545,7 +1545,7 @@
           }
         },
         {
-          "id": "7805b538-5023-40b6-a9a1-6bd15664e1d1",
+          "id": "417faed9-b104-4568-b93b-4a13c2160e4a",
           "name": "Actualiza un totem",
           "request": {
             "name": "Actualiza un totem",
@@ -1590,7 +1590,7 @@
           },
           "response": [
             {
-              "id": "4bf884ee-6635-4ff9-9c63-c289b2076053",
+              "id": "c9613c5f-c4d0-4d1b-8d49-e033da7cfbc2",
               "name": "Totem actualizado",
               "originalRequest": {
                 "url": {
@@ -1653,7 +1653,7 @@
           }
         },
         {
-          "id": "22a970a5-7a87-45ed-96c9-436f9397d6fa",
+          "id": "dafdb347-c58d-49ed-afcb-de75db2f6384",
           "name": "Elimina un totem (soft delete)",
           "request": {
             "name": "Elimina un totem (soft delete)",
@@ -1683,7 +1683,7 @@
           },
           "response": [
             {
-              "id": "5f5491d8-89bb-40e2-9df6-37e6ddd4e26a",
+              "id": "d3d182bc-5179-4c2d-8098-6fc96bed866c",
               "name": "Totem eliminado",
               "originalRequest": {
                 "url": {
@@ -1738,7 +1738,7 @@
           }
         },
         {
-          "id": "42f52bd3-7b21-490b-9a85-dbbc00457d96",
+          "id": "8c48c2c8-4a95-40e3-9ae4-ef45b8844862",
           "name": "Obtiene la lista de videos ordenada para el totem (Playlist)",
           "request": {
             "name": "Obtiene la lista de videos ordenada para el totem (Playlist)",
@@ -1769,7 +1769,7 @@
           },
           "response": [
             {
-              "id": "426c422c-aa35-4b54-8177-44c555ea419d",
+              "id": "e3b4fb8d-e19f-40e7-b27a-aa6626b561eb",
               "name": "Playlist del totem",
               "originalRequest": {
                 "url": {
@@ -1825,7 +1825,7 @@
           }
         },
         {
-          "id": "3b18d897-1ca7-4314-a8c8-31f13afcdd09",
+          "id": "e069e774-9ac6-4b9a-a270-b5d3daac20a8",
           "name": "Actualiza las coordenadas de un totem",
           "request": {
             "name": "Actualiza las coordenadas de un totem",
@@ -1871,7 +1871,7 @@
           },
           "response": [
             {
-              "id": "51c2c2fa-9dcc-45cf-a790-5869d1ed540e",
+              "id": "1c36a544-b71d-4270-83a7-3cef10c518c0",
               "name": "Coordenadas actualizadas",
               "originalRequest": {
                 "url": {
@@ -1938,7 +1938,7 @@
       "event": []
     },
     {
-      "id": "cea47136-39b6-4ad5-ab41-9d32b1d4396e",
+      "id": "9a673e5b-13fb-47b8-8dc6-22a4a77f8594",
       "name": "Videos",
       "description": {
         "content": "API para la gestión de videos",
@@ -1946,7 +1946,7 @@
       },
       "item": [
         {
-          "id": "da4082f3-075a-49a6-8122-1ae6ae04c202",
+          "id": "e98dac2b-f706-4283-ab3a-4bfc8fae4e4c",
           "name": "Obtiene todos los videos",
           "request": {
             "name": "Obtiene todos los videos",
@@ -1967,7 +1967,7 @@
           },
           "response": [
             {
-              "id": "f75e1990-62e9-4274-8abb-cc2b1e1d39fa",
+              "id": "ef80dd6e-ecd1-4dd1-8ea4-8bcbed75432f",
               "name": "Lista de videos",
               "originalRequest": {
                 "url": {
@@ -2013,7 +2013,7 @@
           }
         },
         {
-          "id": "4d0ea6cd-ff31-4df8-8695-5908ec7d2419",
+          "id": "3bb64e62-3229-49dd-9cff-3ae0e0c1ab87",
           "name": "Sube un nuevo video o archivo comprimido",
           "request": {
             "name": "Sube un nuevo video o archivo comprimido",
@@ -2062,7 +2062,7 @@
           },
           "response": [
             {
-              "id": "c411a3c2-e3c0-492b-bc93-018e29b508da",
+              "id": "45afa2b0-9db5-4341-a150-8769a5cfc1bf",
               "name": "Video subido con éxito",
               "originalRequest": {
                 "url": {
@@ -2139,7 +2139,7 @@
           }
         },
         {
-          "id": "acbe2b35-db88-47e4-a778-c68baa17f61a",
+          "id": "c13adc5c-f165-4aee-88bd-480ce97815dc",
           "name": "Elimina un video (soft delete)",
           "request": {
             "name": "Elimina un video (soft delete)",
@@ -2169,7 +2169,7 @@
           },
           "response": [
             {
-              "id": "73da3c1f-48d2-41c1-8bbf-a86076f52009",
+              "id": "55a40544-2bdc-48ef-bda1-f6869226d1c2",
               "name": "Video eliminado",
               "originalRequest": {
                 "url": {
@@ -2253,7 +2253,7 @@
     ]
   },
   "info": {
-    "_postman_id": "999f06d2-4eea-42cd-86e7-091ecae12b7e",
+    "_postman_id": "329ca392-9725-4af6-9953-afb6fd9ce888",
     "name": "API de Mantenedor de Boletos y Publicidad",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
     "description": {

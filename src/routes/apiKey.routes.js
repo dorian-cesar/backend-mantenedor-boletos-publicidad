@@ -51,8 +51,8 @@ router.get('/', [authMiddleware, roleMiddleware(['ADMIN'])], apiKeyController.ge
 /**
  * @swagger
  * /api/api-keys/{id}:
- *   put:
- *     summary: Actualiza una API Key (Solo Admin)
+ *   patch:
+ *     summary: Actualiza parcialmente una API Key (Solo Admin)
  *     tags: [ApiKeys]
  *     parameters:
  *       - in: path
@@ -79,7 +79,7 @@ router.get('/', [authMiddleware, roleMiddleware(['ADMIN'])], apiKeyController.ge
  *       200:
  *         description: API Key actualizada
  */
-router.put('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], apiKeyController.update);
+router.patch('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], apiKeyController.update);
 
 /**
  * @swagger
