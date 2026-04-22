@@ -16,5 +16,6 @@ module.exports = {
     Empresa,
     Video,
     Totem,
-    TotemVideo
+    TotemVideo,
+    ApiKey
 };
