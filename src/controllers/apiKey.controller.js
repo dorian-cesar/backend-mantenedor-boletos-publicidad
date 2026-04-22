@@ -5,7 +5,7 @@ exports.create = async (req, res) => {
     try {
         const { description } = req.body;
         const key = crypto.randomBytes(32).toString('hex');
-        
+
         const apiKey = await ApiKey.create({
             key,
             description
@@ -30,7 +30,7 @@ exports.delete = async (req, res) => {
     try {
         const { id } = req.params;
         const apiKey = await ApiKey.findByPk(id);
-        
+
         if (!apiKey) {
             return res.status(404).json({ message: 'API Key no encontrada' });
         }
