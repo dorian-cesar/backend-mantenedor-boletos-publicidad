@@ -1,4 +1,4 @@
-const Video = require('../models/Video');
+const { Video, Empresa } = require('../models');
 const AdmZip = require('adm-zip');
 const path = require('path');
 const fs = require('fs');

@@ -1,6 +1,6 @@
+require('dotenv').config();
 const app = require('./app');
 const sequelize = require('./config/database');
-require('dotenv').config();
 
 // El puerto se usará directamente desde process.env
 

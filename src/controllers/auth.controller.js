@@ -1,5 +1,4 @@
-const Usuario = require('../models/Usuario');
-const Rol = require('../models/Rol');
+const { Usuario, Rol } = require('../models');
 const jwt = require('jsonwebtoken');
 
 exports.register = async (req, res) => {

@@ -1,5 +1,4 @@
-const Totem = require('../models/Totem');
-const Video = require('../models/Video');
+const { Totem, Video } = require('../models');
 
 exports.getAll = async (req, res) => {
     try {
