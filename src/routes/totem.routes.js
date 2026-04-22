@@ -21,6 +21,12 @@ const roleMiddleware = require('../middlewares/role.middleware');
  *           type: string
  *         direccion:
  *           type: string
+ *         latitud:
+ *           type: number
+ *           format: float
+ *         longitud:
+ *           type: number
+ *           format: float
  *         status:
  *           type: boolean
  */
@@ -46,6 +52,42 @@ router.get('/', authMiddleware, totemController.getAll);
 
 /**
  * @swagger
+ * /api/totems/{id}:
+ *   get:
+ *     summary: Obtiene un totem por ID
+ *     tags: [Totems]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Detalles del totem
+ */
+router.get('/:id', authMiddleware, totemController.getById);
+
+/**
+ * @swagger
+ * /api/totems/{id}/playlist:
+ *   get:
+ *     summary: Obtiene la lista de videos ordenada para el totem (Playlist)
+ *     tags: [Totems]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Playlist del totem
+ */
+router.get('/:id/playlist', authMiddleware, totemController.getPlaylist);
+
+/**
+ * @swagger
  * /api/totems:
  *   post:
  *     summary: Crea un nuevo totem
@@ -61,6 +103,10 @@ router.get('/', authMiddleware, totemController.getAll);
  *                 type: string
  *               direccion:
  *                 type: string
+ *               latitud:
+ *                 type: number
+ *               longitud:
+ *                 type: number
  *               video_ids:
  *                 type: array
  *                 items:
@@ -94,6 +140,10 @@ router.post('/', [authMiddleware, roleMiddleware(['ADMIN'])], totemController.cr
  *                 type: string
  *               direccion:
  *                 type: string
+ *               latitud:
+ *                 type: number
+ *               longitud:
+ *                 type: number
  *               video_ids:
  *                 type: array
  *                 items:
@@ -103,6 +153,35 @@ router.post('/', [authMiddleware, roleMiddleware(['ADMIN'])], totemController.cr
  *         description: Totem actualizado
  */
 router.put('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], totemController.update);
+
+/**
+ * @swagger
+ * /api/totems/{id}/coordinates:
+ *   patch:
+ *     summary: Actualiza las coordenadas de un totem
+ *     tags: [Totems]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               latitud:
+ *                 type: number
+ *               longitud:
+ *                 type: number
+ *     responses:
+ *       200:
+ *         description: Coordenadas actualizadas
+ */
+router.patch('/:id/coordinates', authMiddleware, totemController.updateCoordinates);
 
 /**
  * @swagger

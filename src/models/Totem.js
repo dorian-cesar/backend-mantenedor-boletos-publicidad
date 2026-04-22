@@ -16,6 +16,14 @@ const Totem = sequelize.define('Totem', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    latitud: {
+        type: DataTypes.DECIMAL(10, 8),
+        allowNull: true
+    },
+    longitud: {
+        type: DataTypes.DECIMAL(11, 8),
+        allowNull: true
+    },
     status: {
         type: DataTypes.BOOLEAN,
         defaultValue: true
