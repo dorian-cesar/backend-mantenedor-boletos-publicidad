@@ -8,7 +8,9 @@ const ApiKey = require('./ApiKey');
 
 // Las asociaciones ya están definidas dentro de los archivos de los modelos,
 // pero para asegurarnos de que se carguen todas, las importamos aquí.
-// Sin embargo, es mejor centralizarlas aquí para evitar problemas de dependencia circular.
+// Relaciones para ApiKey
+Totem.hasMany(ApiKey, { foreignKey: 'totem_id', as: 'apiKeys', onDelete: 'NO ACTION' });
+ApiKey.belongsTo(Totem, { foreignKey: 'totem_id', as: 'totem', onDelete: 'NO ACTION' });
 
 module.exports = {
     Rol,

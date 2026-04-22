@@ -33,7 +33,7 @@ const Video = sequelize.define('Video', {
     paranoid: true
 });
 
-Empresa.hasMany(Video, { foreignKey: 'empresa_id' });
-Video.belongsTo(Empresa, { foreignKey: 'empresa_id' });
+Empresa.hasMany(Video, { foreignKey: 'empresa_id', onDelete: 'NO ACTION' });
+Video.belongsTo(Empresa, { foreignKey: 'empresa_id', onDelete: 'NO ACTION' });
 
 module.exports = Video;

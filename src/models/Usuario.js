@@ -60,7 +60,7 @@ Usuario.prototype.comparePassword = async function (candidatePassword) {
     return await bcrypt.compare(candidatePassword, this.password);
 };
 
-Usuario.belongsTo(Rol, { foreignKey: 'rol_id', as: 'rol' });
-Rol.hasMany(Usuario, { foreignKey: 'rol_id' });
+Usuario.belongsTo(Rol, { foreignKey: 'rol_id', as: 'rol', onDelete: 'NO ACTION' });
+Rol.hasMany(Usuario, { foreignKey: 'rol_id', onDelete: 'NO ACTION' });
 
 module.exports = Usuario;
