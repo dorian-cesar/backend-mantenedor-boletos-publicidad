@@ -9,7 +9,7 @@ const apiKeyMiddleware = async (req, res, next) => {
         return next();
     }
 
-    const apiKeyHeader = req.headers['x-api-key'];
+    const apiKeyHeader = req.headers['x-api-key'] || req.query.apiKey;
 
     if (!apiKeyHeader) {
         return res.status(403).json({

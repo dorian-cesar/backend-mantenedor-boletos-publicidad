@@ -16,13 +16,27 @@ const ApiKey = sequelize.define('ApiKey', {
         type: DataTypes.STRING,
         allowNull: true
     },
+    tipo: {
+        type: DataTypes.ENUM('PLATAFORMA', 'TOTEM'),
+        allowNull: false,
+        defaultValue: 'PLATAFORMA'
+    },
+    totem_id: {
+        type: DataTypes.INTEGER,
+        allowNull: true,
+        references: {
+            model: 'totems',
+            key: 'id'
+        }
+    },
     status: {
         type: DataTypes.BOOLEAN,
         defaultValue: true
     }
 }, {
     tableName: 'api_keys',
-    timestamps: true
+    timestamps: true,
+    paranoid: true
 });
 
 module.exports = ApiKey;
