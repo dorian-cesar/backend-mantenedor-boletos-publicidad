@@ -59,4 +59,16 @@ router.post('/register', authController.register);
  */
 router.post('/login', authController.login);
 
+/**
+ * @swagger
+ * /api/auth/users:
+ *   get:
+ *     summary: Obtiene todos los usuarios (Solo Admin)
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: Lista de usuarios
+ */
+router.get('/users', authController.getAllUsers);
+
 module.exports = router;

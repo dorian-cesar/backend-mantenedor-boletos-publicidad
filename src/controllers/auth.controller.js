@@ -58,3 +58,15 @@ exports.login = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+exports.getAllUsers = async (req, res) => {
+    try {
+        const usuarios = await Usuario.findAll({
+            attributes: { exclude: ['password'] },
+            include: [{ model: Rol, as: 'rol' }]
+        });
+        res.json(usuarios);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
