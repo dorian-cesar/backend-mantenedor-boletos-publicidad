@@ -10,7 +10,7 @@ async function startServer() {
         console.log('Conexión a la base de datos establecida correctamente.');
         
         // Sincronizar modelos (solo para desarrollo)
-        await sequelize.sync({ alter: true });
+        await sequelize.sync();
         console.log('Modelos sincronizados correctamente.');
 
         // Seeding de Roles iniciales
