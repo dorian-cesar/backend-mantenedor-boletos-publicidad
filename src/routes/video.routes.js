@@ -17,15 +17,13 @@ const roleMiddleware = require('../middlewares/role.middleware');
  *         - empresa_id
  *       properties:
  *         id:
- *           type: string
- *           format: uuid
+ *           type: integer
  *         nombre:
  *           type: string
  *         url:
  *           type: string
  *         empresa_id:
- *           type: string
- *           format: uuid
+ *           type: integer
  *         status:
  *           type: boolean
  */
@@ -64,8 +62,7 @@ router.get('/', authMiddleware, videoController.getAll);
  *               nombre:
  *                 type: string
  *               empresa_id:
- *                 type: string
- *                 format: uuid
+ *                 type: integer
  *               video:
  *                 type: string
  *                 format: binary
@@ -86,8 +83,7 @@ router.post('/', [authMiddleware, roleMiddleware(['ADMIN', 'USER']), upload.sing
  *         name: id
  *         required: true
  *         schema:
- *           type: string
- *           format: uuid
+ *           type: integer
  *     responses:
  *       200:
  *         description: Video eliminado

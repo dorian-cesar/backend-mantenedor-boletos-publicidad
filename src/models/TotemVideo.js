@@ -10,14 +10,14 @@ const TotemVideo = sequelize.define('TotemVideo', {
         autoIncrement: true
     },
     totem_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         references: {
             model: Totem,
             key: 'id'
         }
     },
     video_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         references: {
             model: Video,
             key: 'id'

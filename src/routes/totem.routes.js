@@ -16,8 +16,7 @@ const roleMiddleware = require('../middlewares/role.middleware');
  *         - direccion
  *       properties:
  *         id:
- *           type: string
- *           format: uuid
+ *           type: integer
  *         identificador:
  *           type: string
  *         direccion:
@@ -65,8 +64,7 @@ router.get('/', authMiddleware, totemController.getAll);
  *               video_ids:
  *                 type: array
  *                 items:
- *                   type: string
- *                   format: uuid
+ *                   type: integer
  *     responses:
  *       201:
  *         description: Totem creado
@@ -84,8 +82,7 @@ router.post('/', [authMiddleware, roleMiddleware(['ADMIN'])], totemController.cr
  *         name: id
  *         required: true
  *         schema:
- *           type: string
- *           format: uuid
+ *           type: integer
  *     requestBody:
  *       required: true
  *       content:
@@ -100,8 +97,7 @@ router.post('/', [authMiddleware, roleMiddleware(['ADMIN'])], totemController.cr
  *               video_ids:
  *                 type: array
  *                 items:
- *                   type: string
- *                   format: uuid
+ *                   type: integer
  *     responses:
  *       200:
  *         description: Totem actualizado
@@ -119,8 +115,7 @@ router.put('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], totemController.
  *         name: id
  *         required: true
  *         schema:
- *           type: string
- *           format: uuid
+ *           type: integer
  *     responses:
  *       200:
  *         description: Totem eliminado

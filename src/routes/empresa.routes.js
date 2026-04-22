@@ -14,8 +14,7 @@ const roleMiddleware = require('../middlewares/role.middleware');
  *         - nombre
  *       properties:
  *         id:
- *           type: string
- *           format: uuid
+ *           type: integer
  *           description: ID autogenerado de la empresa
  *         nombre:
  *           type: string
@@ -65,8 +64,7 @@ router.get('/', authMiddleware, empresaController.getAll);
  *         name: id
  *         required: true
  *         schema:
- *           type: string
- *           format: uuid
+ *           type: integer
  *     responses:
  *       200:
  *         description: Detalles de la empresa
@@ -110,8 +108,7 @@ router.post('/', [authMiddleware, roleMiddleware(['ADMIN'])], empresaController.
  *         name: id
  *         required: true
  *         schema:
- *           type: string
- *           format: uuid
+ *           type: integer
  *     requestBody:
  *       required: true
  *       content:
@@ -137,8 +134,7 @@ router.put('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], empresaControlle
  *         name: id
  *         required: true
  *         schema:
- *           type: string
- *           format: uuid
+ *           type: integer
  *     responses:
  *       200:
  *         description: Empresa eliminada

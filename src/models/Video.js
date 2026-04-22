@@ -4,9 +4,9 @@ const Empresa = require('./Empresa');
 
 const Video = sequelize.define('Video', {
     id: {
-        type: DataTypes.UUID,
-        defaultValue: DataTypes.UUIDV4,
-        primaryKey: true
+        type: DataTypes.INTEGER,
+        primaryKey: true,
+        autoIncrement: true
     },
     nombre: {
         type: DataTypes.STRING,
@@ -17,7 +17,7 @@ const Video = sequelize.define('Video', {
         allowNull: false
     },
     empresa_id: {
-        type: DataTypes.UUID,
+        type: DataTypes.INTEGER,
         allowNull: false,
         references: {
             model: Empresa,
