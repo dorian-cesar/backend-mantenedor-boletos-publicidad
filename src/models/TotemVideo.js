@@ -32,7 +32,7 @@ const TotemVideo = sequelize.define('TotemVideo', {
     timestamps: false
 });
 
-Totem.belongsToMany(Video, { through: TotemVideo, foreignKey: 'totem_id', as: 'videos' });
-Video.belongsToMany(Totem, { through: TotemVideo, foreignKey: 'video_id', as: 'totems' });
+Totem.belongsToMany(Video, { through: TotemVideo, foreignKey: 'totem_id', as: 'videos', onDelete: 'NO ACTION' });
+Video.belongsToMany(Totem, { through: TotemVideo, foreignKey: 'video_id', as: 'totems', onDelete: 'NO ACTION' });
 
 module.exports = TotemVideo;
