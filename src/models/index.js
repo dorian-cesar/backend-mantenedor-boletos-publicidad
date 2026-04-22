@@ -4,6 +4,7 @@ const Empresa = require('./Empresa');
 const Video = require('./Video');
 const Totem = require('./Totem');
 const TotemVideo = require('./TotemVideo');
+const ApiKey = require('./ApiKey');
 
 // Las asociaciones ya están definidas dentro de los archivos de los modelos,
 // pero para asegurarnos de que se carguen todas, las importamos aquí.
