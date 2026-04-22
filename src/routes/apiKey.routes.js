@@ -51,6 +51,39 @@ router.get('/', [authMiddleware, roleMiddleware(['ADMIN'])], apiKeyController.ge
 /**
  * @swagger
  * /api/api-keys/{id}:
+ *   put:
+ *     summary: Actualiza una API Key (Solo Admin)
+ *     tags: [ApiKeys]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               description:
+ *                 type: string
+ *               status:
+ *                 type: boolean
+ *               tipo:
+ *                 type: string
+ *                 enum: [PLATAFORMA, TOTEM]
+ *               totem_id:
+ *                 type: integer
+ *     responses:
+ *       200:
+ *         description: API Key actualizada
+ */
+router.put('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], apiKeyController.update);
+
+/**
+ * @swagger
+ * /api/api-keys/{id}:
  *   delete:
  *     summary: Elimina una API Key (Solo Admin)
  *     tags: [ApiKeys]
