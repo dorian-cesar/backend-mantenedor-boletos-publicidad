@@ -25,6 +25,11 @@ const roleMiddleware = require('../middlewares/role.middleware');
  *             properties:
  *               description:
  *                 type: string
+ *               tipo:
+ *                 type: string
+ *                 enum: [PLATAFORMA, TOTEM]
+ *               totem_id:
+ *                 type: integer
  *     responses:
  *       201:
  *         description: API Key generada
