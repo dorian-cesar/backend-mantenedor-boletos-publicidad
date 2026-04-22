@@ -37,8 +37,9 @@ if (process.env.SWAGGER_ENABLED === 'true') {
         res.send(swaggerSpec);
     });
     
-    console.log('Swagger docs available at http://localhost:3000/api-docs');
-    console.log('Swagger JSON available at http://localhost:3000/api-docs.json');
+    const baseUrl = process.env.BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+    console.log(`Swagger docs available at ${baseUrl}/api-docs`);
+    console.log(`Swagger JSON available at ${baseUrl}/api-docs.json`);
 }
 
 // Error handling middleware
