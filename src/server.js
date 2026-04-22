@@ -29,4 +29,9 @@ async function startServer() {
     }
 }
 
-startServer();
+// Iniciar el servidor
+startServer().then(() => {
+    // El servidor ya está escuchando dentro de startServer
+    // Mantenemos el proceso vivo explícitamente si es necesario (aunque app.listen debería bastar)
+    setInterval(() => {}, 1000000); 
+});

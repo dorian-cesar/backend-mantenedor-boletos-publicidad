@@ -9,8 +9,8 @@ const app = express();
 
 // Middlewares
 app.use(helmet({
-    crossOriginEmbedderPolicy: { policy: "require-corp" },
-    crossOriginOpenerPolicy: { policy: "same-origin" },
+    contentSecurityPolicy: false,
+    crossOriginEmbedderPolicy: false,
 }));
 app.use(cors());
 app.use(morgan('dev'));

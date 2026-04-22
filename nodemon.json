@@ -1,0 +1,3 @@
+{
+  "ignore": ["postman_collection.json", "scratch/*", "get_role_ids.js"]
+}
