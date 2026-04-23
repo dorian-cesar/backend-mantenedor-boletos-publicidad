@@ -193,6 +193,42 @@ router.put('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], totemController.
 
 /**
  * @swagger
+ * /api/totems/{id}:
+ *   patch:
+ *     summary: Actualiza parcialmente un totem
+ *     tags: [Totems]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               identificador:
+ *                 type: string
+ *               direccion:
+ *                 type: string
+ *               latitud:
+ *                 type: number
+ *               longitud:
+ *                 type: number
+ *               video_ids:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *     responses:
+ *       200:
+ *         description: Totem actualizado parcialmente
+ */
+router.patch('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], totemController.patch);
+
+/**
+ * @swagger
  * /api/totems/{id}/coordinates:
  *   patch:
  *     summary: Actualiza las coordenadas de un totem

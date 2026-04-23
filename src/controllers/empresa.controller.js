@@ -53,12 +53,15 @@ exports.delete = async (req, res) => {
 exports.getVideosByEmpresa = async (req, res) => {
     try {
         const { id } = req.params;
-        const empresa = await Empresa.findByPk(id);
-        if (!empresa) return res.status(404).json({ message: 'Empresa no encontrada' });
+        // Soportamos múltiples IDs separados por comas (ej: 1,2,3)
+        const ids = id.split(',').map(i => i.trim()).filter(i => i !== '');
 
         const videos = await Video.findAll({
-            where: { empresa_id: id, status: true },
-            attributes: ['id', 'nombre']
+            where: { 
+                empresa_id: ids,
+                status: true 
+            },
+            attributes: ['id', 'nombre', 'empresa_id']
         });
 
         res.json(videos);

@@ -83,10 +83,34 @@ exports.update = async (req, res) => {
         const totem = await Totem.findByPk(req.params.id);
         if (!totem) return res.status(404).json({ message: 'Totem no encontrado' });
 
-        await totem.update({ identificador, direccion, latitud, longitud });
+        // En PUT solemos actualizar todos los campos principales
+        await totem.update({ 
+            identificador: identificador || totem.identificador, 
+            direccion: direccion || totem.direccion, 
+            latitud: latitud !== undefined ? latitud : totem.latitud, 
+            longitud: longitud !== undefined ? longitud : totem.longitud 
+        });
 
         if (video_ids) {
             await totem.setVideos(video_ids);
+        }
+
+        res.json(totem);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+exports.patch = async (req, res) => {
+    try {
+        const totem = await Totem.findByPk(req.params.id);
+        if (!totem) return res.status(404).json({ message: 'Totem no encontrado' });
+
+        // PATCH solo actualiza los campos presentes en req.body
+        await totem.update(req.body);
+
+        if (req.body.video_ids) {
+            await totem.setVideos(req.body.video_ids);
         }
 
         res.json(totem);

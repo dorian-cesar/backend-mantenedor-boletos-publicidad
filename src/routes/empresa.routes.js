@@ -147,17 +147,19 @@ router.delete('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], empresaContro
  * @swagger
  * /api/empresas/{id}/videos:
  *   get:
- *     summary: Obtiene los videos asociados a una empresa (ID y Nombre)
+ *     summary: Obtiene los videos asociados a una o varias empresas (ID y Nombre)
+ *     description: "Permite enviar uno o varios IDs de empresa separados por comas (ej: 1 o 1,2,3)"
  *     tags: [Empresas]
  *     parameters:
  *       - in: path
  *         name: id
  *         required: true
  *         schema:
- *           type: integer
+ *           type: string
+ *         description: ID o lista de IDs de empresa (separados por coma)
  *     responses:
  *       200:
- *         description: Lista de videos de la empresa
+ *         description: Lista de videos de las empresas solicitadas
  *         content:
  *           application/json:
  *             schema:
@@ -169,6 +171,8 @@ router.delete('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], empresaContro
  *                     type: integer
  *                   nombre:
  *                     type: string
+ *                   empresa_id:
+ *                     type: integer
  */
 router.get('/:id/videos', authMiddleware, empresaController.getVideosByEmpresa);
 
