@@ -30,8 +30,12 @@ if (process.env.SWAGGER_ENABLED === 'true') {
     const swaggerUi = require('swagger-ui-express');
     const swaggerSpec = require('./config/swagger');
     
-    // UI de Swagger
-    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+    // UI de Swagger con persistencia de autorización
+    app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+        swaggerOptions: {
+            persistAuthorization: true
+        }
+    }));
     
     // JSON de Swagger para importar en Postman
     app.get('/api-docs.json', (req, res) => {

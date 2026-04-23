@@ -1,4 +1,5 @@
-const { Totem, Video } = require('../models');
+const { Totem, Video, ApiKey, TotemVideo } = require('../models');
+const jwt = require('jsonwebtoken');
 
 exports.getAll = async (req, res) => {
     try {
@@ -25,6 +26,11 @@ exports.getById = async (req, res) => {
 
 exports.getPlaylist = async (req, res) => {
     try {
+        // Si el usuario es un TOTEM, solo puede pedir su propia playlist
+        if (req.user.rol === 'TOTEM' && parseInt(req.user.id) !== parseInt(req.params.id)) {
+            return res.status(403).json({ message: 'No tienes permiso para acceder a la playlist de otro tótem' });
+        }
+
         const totem = await Totem.findByPk(req.params.id, {
             include: [{ 
                 model: Video, 
@@ -32,7 +38,7 @@ exports.getPlaylist = async (req, res) => {
                 through: { attributes: ['orden'] },
                 where: { status: true } 
             }],
-            order: [[ { model: Video, as: 'videos' }, 'TotemVideo', 'orden', 'ASC']]
+            order: [[ { model: Video, as: 'videos' }, TotemVideo, 'orden', 'ASC']]
         });
         
         if (!totem) return res.status(404).json({ message: 'Totem no encontrado' });
@@ -116,6 +122,62 @@ exports.delete = async (req, res) => {
         if (!totem) return res.status(404).json({ message: 'Totem no encontrado' });
         await totem.destroy();
         res.json({ message: 'Totem eliminado (soft delete)' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.loginTotem = async (req, res) => {
+    try {
+        const { id, apiKey } = req.body;
+        
+        if (!id || !apiKey) {
+            return res.status(400).json({ message: 'Se requiere id y apiKey en el cuerpo de la petición' });
+        }
+
+        // Buscamos el totem
+        const totem = await Totem.findByPk(id);
+        if (!totem) {
+            return res.status(404).json({ message: 'Totem no encontrado' });
+        }
+
+        // Validamos que el API Key exista, sea de tipo TOTEM y esté asociada a este totem
+        const keyRecord = await ApiKey.findOne({ 
+            where: { 
+                key: apiKey, 
+                totem_id: id,
+                status: true,
+                tipo: 'TOTEM'
+            } 
+        });
+
+        if (!keyRecord) {
+            return res.status(403).json({ 
+                message: 'Credenciales de tótem inválidas o llave inactiva' 
+            });
+        }
+
+        // Generamos un JWT de larga duración para el tótem (ej: 1 año)
+        const token = jwt.sign(
+            { 
+                id: totem.id, 
+                identificador: totem.identificador, 
+                tipo: 'TOTEM',
+                rol: 'TOTEM' // Añadimos rol por compatibilidad con middlewares existentes
+            },
+            process.env.JWT_SECRET,
+            { expiresIn: '365d' }
+        );
+
+        res.json({
+            message: 'Login de tótem exitoso',
+            token,
+            totem: {
+                id: totem.id,
+                identificador: totem.identificador,
+                direccion: totem.direccion
+            }
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

@@ -1,4 +1,4 @@
-const { Empresa } = require('../models');
+const { Empresa, Video } = require('../models');
 
 exports.getAll = async (req, res) => {
     try {
@@ -45,6 +45,23 @@ exports.delete = async (req, res) => {
         if (!empresa) return res.status(404).json({ message: 'Empresa no encontrada' });
         await empresa.destroy(); // Soft delete
         res.json({ message: 'Empresa eliminada (soft delete)' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.getVideosByEmpresa = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const empresa = await Empresa.findByPk(id);
+        if (!empresa) return res.status(404).json({ message: 'Empresa no encontrada' });
+
+        const videos = await Video.findAll({
+            where: { empresa_id: id, status: true },
+            attributes: ['id', 'nombre']
+        });
+
+        res.json(videos);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

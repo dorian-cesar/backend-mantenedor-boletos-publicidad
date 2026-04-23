@@ -143,4 +143,33 @@ router.put('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], empresaControlle
  */
 router.delete('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], empresaController.delete);
 
+/**
+ * @swagger
+ * /api/empresas/{id}/videos:
+ *   get:
+ *     summary: Obtiene los videos asociados a una empresa (ID y Nombre)
+ *     tags: [Empresas]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Lista de videos de la empresa
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: object
+ *                 properties:
+ *                   id:
+ *                     type: integer
+ *                   nombre:
+ *                     type: string
+ */
+router.get('/:id/videos', authMiddleware, empresaController.getVideosByEmpresa);
+
 module.exports = router;

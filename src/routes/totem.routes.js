@@ -52,6 +52,43 @@ router.get('/', authMiddleware, totemController.getAll);
 
 /**
  * @swagger
+ * /api/totems/login:
+ *   post:
+ *     summary: Autentica un totem para obtener un token de acceso
+ *     tags: [Totems]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - id
+ *               - apiKey
+ *             properties:
+ *               id:
+ *                 type: integer
+ *               apiKey:
+ *                 type: string
+ *     responses:
+ *       200:
+ *         description: Login exitoso, devuelve un JWT
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 message:
+ *                   type: string
+ *                 token:
+ *                   type: string
+ *                 totem:
+ *                   $ref: '#/components/schemas/Totem'
+ */
+router.post('/login', totemController.loginTotem);
+
+/**
+ * @swagger
  * /api/totems/{id}:
  *   get:
  *     summary: Obtiene un totem por ID
