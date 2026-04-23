@@ -1,6 +1,11 @@
 const jwt = require('jsonwebtoken');
 
 const authMiddleware = (req, res, next) => {
+    // Si el usuario ya fue autenticado (ej: por API Key de Tótem), permitimos pasar
+    if (req.user) {
+        return next();
+    }
+
     const authHeader = req.headers.authorization;
 
     if (!authHeader || !authHeader.startsWith('Bearer ')) {
