@@ -12,6 +12,16 @@ exports.getAll = async (req, res) => {
     }
 };
 
+exports.getById = async (req, res) => {
+    try {
+        const video = await Video.findByPk(req.params.id);
+        if (!video) return res.status(404).json({ message: 'Video no encontrado' });
+        res.json(video);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 exports.create = async (req, res) => {
     try {
         const { nombre, empresa_id } = req.body;
@@ -45,6 +55,52 @@ exports.create = async (req, res) => {
         });
 
         res.status(201).json(video);
+    } catch (error) {
+        res.status(400).json({ message: error.message });
+    }
+};
+
+exports.update = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { nombre, empresa_id, status } = req.body;
+        
+        const video = await Video.findByPk(id);
+        if (!video) return res.status(404).json({ message: 'Video no encontrado' });
+
+        let updateData = {
+            nombre: nombre !== undefined ? nombre : video.nombre,
+            empresa_id: empresa_id !== undefined ? empresa_id : video.empresa_id,
+            status: status !== undefined ? (status === 'true' || status === true) : video.status
+        };
+
+        if (req.file) {
+            let videoUrl = `/uploads/${req.file.filename}`;
+            const ext = path.extname(req.file.originalname).toLowerCase();
+
+            // Lógica de descompresión si es un ZIP
+            if (ext === '.zip') {
+                const zip = new AdmZip(req.file.path);
+                const zipEntries = zip.getEntries();
+                const videoEntry = zipEntries.find(entry => entry.entryName.toLowerCase().endsWith('.mp4'));
+
+                if (videoEntry) {
+                    const newFilename = `${Date.now()}-${videoEntry.entryName}`;
+                    zip.extractEntryTo(videoEntry, 'uploads/', false, true, newFilename);
+                    videoUrl = `/uploads/${newFilename}`;
+                    fs.unlinkSync(req.file.path);
+                }
+            }
+            
+            // Opcional: borrar el archivo anterior si es diferente
+            // const oldPath = path.join(__dirname, '../../', video.url);
+            // if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
+
+            updateData.url = videoUrl;
+        }
+
+        await video.update(updateData);
+        res.json(video);
     } catch (error) {
         res.status(400).json({ message: error.message });
     }

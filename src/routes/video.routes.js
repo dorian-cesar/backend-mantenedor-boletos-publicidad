@@ -46,6 +46,23 @@ const roleMiddleware = require('../middlewares/role.middleware');
  *         description: Lista de videos
  */
 router.get('/', authMiddleware, videoController.getAll);
+/**
+ * @swagger
+ * /api/videos/{id}:
+ *   get:
+ *     summary: Obtiene un video por ID
+ *     tags: [Videos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Detalles del video
+ */
+router.get('/:id', authMiddleware, videoController.getById);
 
 /**
  * @swagger
@@ -71,6 +88,39 @@ router.get('/', authMiddleware, videoController.getAll);
  *         description: Video subido con éxito
  */
 router.post('/', [authMiddleware, roleMiddleware(['ADMIN', 'USER']), upload.single('video')], videoController.create);
+
+/**
+ * @swagger
+ * /api/videos/{id}:
+ *   put:
+ *     summary: Actualiza un video existente
+ *     tags: [Videos]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       content:
+ *         multipart/form-data:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               nombre:
+ *                 type: string
+ *               empresa_id:
+ *                 type: integer
+ *               status:
+ *                 type: boolean
+ *               video:
+ *                 type: string
+ *                 format: binary
+ *     responses:
+ *       200:
+ *         description: Video actualizado con éxito
+ */
+router.put('/:id', [authMiddleware, roleMiddleware(['ADMIN', 'USER']), upload.single('video')], videoController.update);
 
 /**
  * @swagger
