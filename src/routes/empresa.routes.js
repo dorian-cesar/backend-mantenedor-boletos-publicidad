@@ -19,16 +19,12 @@ const roleMiddleware = require('../middlewares/role.middleware');
  *         nombre:
  *           type: string
  *           description: Nombre de la empresa
- *         descripcion:
- *           type: string
- *           description: Descripción detallada de la empresa
  *         status:
  *           type: boolean
  *           description: Estado de la empresa (activo/inactivo)
  *       example:
- *         id: 1
+ *         id: d290f1ee-6c54-4b01-90e6-d701748f0851
  *         nombre: Pullman Bus
- *         descripcion: Empresa de transporte interurbano líder en Chile.
  *         status: true
  */
 

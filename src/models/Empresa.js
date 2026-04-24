@@ -11,10 +11,6 @@ const Empresa = sequelize.define('Empresa', {
         type: DataTypes.STRING,
         allowNull: false
     },
-    descripcion: {
-        type: DataTypes.TEXT,
-        allowNull: true
-    },
     status: {
         type: DataTypes.BOOLEAN,
         defaultValue: true

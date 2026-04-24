@@ -24,7 +24,7 @@ exports.getById = async (req, res) => {
 
 exports.create = async (req, res) => {
     try {
-        const { nombre, empresa_id } = req.body;
+        const { nombre, descripcion, empresa_id } = req.body;
         if (!req.file) {
             return res.status(400).json({ message: 'No se subió ningún video o archivo comprimido.' });
         }
@@ -49,6 +49,7 @@ exports.create = async (req, res) => {
 
         const video = await Video.create({
             nombre: nombre || req.file.originalname,
+            descripcion,
             url: videoUrl,
             empresa_id,
             status: true
@@ -63,13 +64,14 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nombre, empresa_id, status } = req.body;
+        const { nombre, descripcion, empresa_id, status } = req.body;
         
         const video = await Video.findByPk(id);
         if (!video) return res.status(404).json({ message: 'Video no encontrado' });
 
         let updateData = {
             nombre: nombre !== undefined ? nombre : video.nombre,
+            descripcion: descripcion !== undefined ? descripcion : video.descripcion,
             empresa_id: empresa_id !== undefined ? empresa_id : video.empresa_id,
             status: status !== undefined ? (status === 'true' || status === true) : video.status
         };

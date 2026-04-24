@@ -20,6 +20,8 @@ const roleMiddleware = require('../middlewares/role.middleware');
  *           type: integer
  *         nombre:
  *           type: string
+ *         descripcion:
+ *           type: string
  *         url:
  *           type: string
  *         empresa_id:
@@ -78,6 +80,8 @@ router.get('/:id', authMiddleware, videoController.getById);
  *             properties:
  *               nombre:
  *                 type: string
+ *               descripcion:
+ *                 type: string
  *               empresa_id:
  *                 type: integer
  *               video:
@@ -108,6 +112,8 @@ router.post('/', [authMiddleware, roleMiddleware(['ADMIN', 'USER']), upload.sing
  *             type: object
  *             properties:
  *               nombre:
+ *                 type: string
+ *               descripcion:
  *                 type: string
  *               empresa_id:
  *                 type: integer

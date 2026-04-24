@@ -12,6 +12,10 @@ const Video = sequelize.define('Video', {
         type: DataTypes.STRING,
         allowNull: false
     },
+    descripcion: {
+        type: DataTypes.TEXT,
+        allowNull: true
+    },
     url: {
         type: DataTypes.STRING,
         allowNull: false
