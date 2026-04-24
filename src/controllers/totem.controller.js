@@ -151,6 +151,71 @@ exports.delete = async (req, res) => {
     }
 };
 
+exports.addVideos = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const { video_ids } = req.body;
+
+        if (!video_ids || !Array.isArray(video_ids) || video_ids.length === 0) {
+            return res.status(400).json({ message: 'Se requiere un arreglo video_ids no vacío' });
+        }
+
+        const totem = await Totem.findByPk(id);
+        if (!totem) return res.status(404).json({ message: 'Totem no encontrado' });
+
+        // Obtener el orden máximo actual
+        const lastVideo = await TotemVideo.findOne({
+            where: { totem_id: id },
+            order: [['orden', 'DESC']]
+        });
+
+        let nextOrder = lastVideo ? lastVideo.orden + 1 : 1;
+
+        // Agregar videos uno por uno para asignar el orden
+        const results = [];
+        for (const videoId of video_ids) {
+            // Verificar si ya existe para evitar duplicados en la asociación
+            const exists = await TotemVideo.findOne({ where: { totem_id: id, video_id: videoId } });
+            if (!exists) {
+                const tv = await TotemVideo.create({
+                    totem_id: id,
+                    video_id: videoId,
+                    orden: nextOrder++
+                });
+                results.push(tv);
+            }
+        }
+
+        res.status(201).json({
+            message: `${results.length} videos agregados correctamente`,
+            added: results
+        });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.removeVideo = async (req, res) => {
+    try {
+        const { id, videoId } = req.params;
+
+        const deleted = await TotemVideo.destroy({
+            where: {
+                totem_id: id,
+                video_id: videoId
+            }
+        });
+
+        if (deleted === 0) {
+            return res.status(404).json({ message: 'Asociación no encontrada' });
+        }
+
+        res.json({ message: 'Video removido del tótem correctamente' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 exports.loginTotem = async (req, res) => {
     try {
         const { id, apiKey } = req.body;

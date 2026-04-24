@@ -258,6 +258,60 @@ router.patch('/:id/coordinates', authMiddleware, totemController.updateCoordinat
 
 /**
  * @swagger
+ * /api/totems/{id}/videos:
+ *   post:
+ *     summary: Agrega uno o más videos al tótem
+ *     tags: [Totems]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             required:
+ *               - video_ids
+ *             properties:
+ *               video_ids:
+ *                 type: array
+ *                 items:
+ *                   type: integer
+ *     responses:
+ *       201:
+ *         description: Videos agregados correctamente
+ */
+router.post('/:id/videos', [authMiddleware, roleMiddleware(['ADMIN'])], totemController.addVideos);
+
+/**
+ * @swagger
+ * /api/totems/{id}/videos/{videoId}:
+ *   delete:
+ *     summary: Remueve un video específico del tótem
+ *     tags: [Totems]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *       - in: path
+ *         name: videoId
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Video removido correctamente
+ */
+router.delete('/:id/videos/:videoId', [authMiddleware, roleMiddleware(['ADMIN'])], totemController.removeVideo);
+
+/**
+ * @swagger
  * /api/totems/{id}:
  *   delete:
  *     summary: Elimina un totem (soft delete)

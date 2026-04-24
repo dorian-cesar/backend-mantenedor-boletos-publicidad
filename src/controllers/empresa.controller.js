@@ -53,18 +53,31 @@ exports.delete = async (req, res) => {
 exports.getVideosByEmpresa = async (req, res) => {
     try {
         const { id } = req.params;
+        const { limit } = req.query;
         // Soportamos múltiples IDs separados por comas (ej: 1,2,3)
         const ids = id.split(',').map(i => i.trim()).filter(i => i !== '');
 
-        const videos = await Video.findAll({
+        const options = {
             where: { 
                 empresa_id: ids,
                 status: true 
             },
             attributes: ['id', 'nombre', 'empresa_id']
-        });
+        };
 
-        res.json(videos);
+        if (limit) {
+            options.limit = parseInt(limit);
+            // Si hay límite, solemos querer videos aleatorios o por algún criterio
+            // Para este caso, usaremos orden aleatorio si se pide límite
+            options.order = [require('../models').sequelize.random()];
+        }
+
+        const videos = await Video.findAll(options);
+
+        res.json({
+            total: videos.length,
+            videos
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

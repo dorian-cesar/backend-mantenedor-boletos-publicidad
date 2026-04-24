@@ -157,22 +157,34 @@ router.delete('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], empresaContro
  *         schema:
  *           type: string
  *         description: ID o lista de IDs de empresa (separados por coma)
+ *       - in: query
+ *         name: limit
+ *         required: false
+ *         schema:
+ *           type: integer
+ *         description: Cantidad máxima de videos a retornar (aleatorios)
  *     responses:
  *       200:
- *         description: Lista de videos de las empresas solicitadas
+ *         description: Lista de videos de las empresas solicitadas con el conteo total
  *         content:
  *           application/json:
  *             schema:
- *               type: array
- *               items:
- *                 type: object
- *                 properties:
- *                   id:
- *                     type: integer
- *                   nombre:
- *                     type: string
- *                   empresa_id:
- *                     type: integer
+ *               type: object
+ *               properties:
+ *                 total:
+ *                   type: integer
+ *                   description: Cantidad total de videos encontrados
+ *                 videos:
+ *                   type: array
+ *                   items:
+ *                     type: object
+ *                     properties:
+ *                       id:
+ *                         type: integer
+ *                       nombre:
+ *                         type: string
+ *                       empresa_id:
+ *                         type: integer
  */
 router.get('/:id/videos', authMiddleware, empresaController.getVideosByEmpresa);
 
