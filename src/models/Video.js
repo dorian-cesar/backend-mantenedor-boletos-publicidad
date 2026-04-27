@@ -31,6 +31,10 @@ const Video = sequelize.define('Video', {
     status: {
         type: DataTypes.BOOLEAN,
         defaultValue: true
+    },
+    orden: {
+        type: DataTypes.INTEGER,
+        defaultValue: 0
     }
 }, {
     tableName: 'videos',

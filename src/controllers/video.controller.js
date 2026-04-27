@@ -5,7 +5,9 @@ const fs = require('fs');
 
 exports.getAll = async (req, res) => {
     try {
-        const videos = await Video.findAll();
+        const videos = await Video.findAll({
+            order: [['orden', 'ASC'], ['createdAt', 'DESC']]
+        });
         res.json(videos);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -47,12 +49,20 @@ exports.create = async (req, res) => {
             }
         }
 
+        // Calcular el siguiente número de orden para esta empresa
+        const lastVideo = await Video.findOne({
+            where: { empresa_id },
+            order: [['orden', 'DESC']]
+        });
+        const nextOrder = lastVideo ? lastVideo.orden + 1 : 1;
+
         const video = await Video.create({
             nombre: nombre || req.file.originalname,
             descripcion,
             url: videoUrl,
             empresa_id,
-            status: true
+            status: true,
+            orden: nextOrder
         });
 
         res.status(201).json(video);
@@ -64,7 +74,7 @@ exports.create = async (req, res) => {
 exports.update = async (req, res) => {
     try {
         const { id } = req.params;
-        const { nombre, descripcion, empresa_id, status } = req.body;
+        const { nombre, descripcion, empresa_id, status, orden } = req.body;
         
         const video = await Video.findByPk(id);
         if (!video) return res.status(404).json({ message: 'Video no encontrado' });
@@ -73,7 +83,8 @@ exports.update = async (req, res) => {
             nombre: nombre !== undefined ? nombre : video.nombre,
             descripcion: descripcion !== undefined ? descripcion : video.descripcion,
             empresa_id: empresa_id !== undefined ? empresa_id : video.empresa_id,
-            status: status !== undefined ? (status === 'true' || status === true) : video.status
+            status: status !== undefined ? (status === 'true' || status === true) : video.status,
+            orden: orden !== undefined ? parseInt(orden) : video.orden
         };
 
         if (req.file) {
@@ -114,6 +125,26 @@ exports.delete = async (req, res) => {
         if (!video) return res.status(404).json({ message: 'Video no encontrado' });
         await video.destroy();
         res.json({ message: 'Video eliminado (soft delete)' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.bulkUpdateOrder = async (req, res) => {
+    try {
+        const { videos } = req.body; // Esperamos un arreglo [{id: 1, orden: 1}, {id: 2, orden: 2}]
+
+        if (!videos || !Array.isArray(videos)) {
+            return res.status(400).json({ message: 'Se requiere un arreglo de videos con id y orden' });
+        }
+
+        const promises = videos.map(v => 
+            Video.update({ orden: v.orden }, { where: { id: v.id } })
+        );
+
+        await Promise.all(promises);
+
+        res.json({ message: 'Orden actualizado correctamente' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

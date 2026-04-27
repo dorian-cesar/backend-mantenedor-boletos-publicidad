@@ -28,6 +28,8 @@ const roleMiddleware = require('../middlewares/role.middleware');
  *           type: integer
  *         status:
  *           type: boolean
+ *         orden:
+ *           type: integer
  */
 
 /**
@@ -145,5 +147,33 @@ router.put('/:id', [authMiddleware, roleMiddleware(['ADMIN', 'USER']), upload.si
  *         description: Video eliminado
  */
 router.delete('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], videoController.delete);
+
+/**
+ * @swagger
+ * /api/videos/reorder:
+ *   post:
+ *     summary: Actualiza el orden de múltiples videos
+ *     tags: [Videos]
+ *     requestBody:
+ *       required: true
+ *       content:
+ *         application/json:
+ *           schema:
+ *             type: object
+ *             properties:
+ *               videos:
+ *                 type: array
+ *                 items:
+ *                   type: object
+ *                   properties:
+ *                     id:
+ *                       type: integer
+ *                     orden:
+ *                       type: integer
+ *     responses:
+ *       200:
+ *         description: Orden actualizado con éxito
+ */
+router.post('/reorder', authMiddleware, videoController.bulkUpdateOrder);
 
 module.exports = router;
