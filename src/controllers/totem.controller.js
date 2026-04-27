@@ -68,7 +68,14 @@ exports.create = async (req, res) => {
         const totem = await Totem.create({ identificador, direccion, latitud, longitud });
 
         if (video_ids && video_ids.length > 0) {
-            await totem.setVideos(video_ids);
+            // Soporta tanto arreglo de IDs [1, 2] como de objetos [{id: 1, orden: 10}]
+            const videosWithOrder = video_ids.map((item, index) => {
+                if (typeof item === 'object' && item !== null) {
+                    return { id: item.id, through: { orden: item.orden } };
+                }
+                return { id: item, through: { orden: index + 1 } };
+            });
+            await totem.setVideos(videosWithOrder);
         }
 
         res.status(201).json(totem);
@@ -92,7 +99,14 @@ exports.update = async (req, res) => {
         });
 
         if (video_ids) {
-            await totem.setVideos(video_ids);
+            // Soporta tanto arreglo de IDs [1, 2] como de objetos [{id: 1, orden: 10}]
+            const videosWithOrder = video_ids.map((item, index) => {
+                if (typeof item === 'object' && item !== null) {
+                    return { id: item.id, through: { orden: item.orden } };
+                }
+                return { id: item, through: { orden: index + 1 } };
+            });
+            await totem.setVideos(videosWithOrder);
         }
 
         res.json(totem);
@@ -110,7 +124,14 @@ exports.patch = async (req, res) => {
         await totem.update(req.body);
 
         if (req.body.video_ids) {
-            await totem.setVideos(req.body.video_ids);
+            // Soporta tanto arreglo de IDs [1, 2] como de objetos [{id: 1, orden: 10}]
+            const videosWithOrder = req.body.video_ids.map((item, index) => {
+                if (typeof item === 'object' && item !== null) {
+                    return { id: item.id, through: { orden: item.orden } };
+                }
+                return { id: item, through: { orden: index + 1 } };
+            });
+            await totem.setVideos(videosWithOrder);
         }
 
         res.json(totem);
