@@ -36,7 +36,8 @@ exports.getPlaylist = async (req, res) => {
                 model: Video, 
                 as: 'videos', 
                 through: { attributes: ['orden'] },
-                where: { status: true } 
+                where: { status: true },
+                required: false
             }],
             order: [[ { model: Video, as: 'videos' }, TotemVideo, 'orden', 'ASC']]
         });
