@@ -1,6 +1,20 @@
 const { Totem, Video, ApiKey, TotemVideo } = require('../models');
 const jwt = require('jsonwebtoken');
 
+const processVideoIds = async (ids) => {
+    if (!ids || ids.length === 0) return [];
+    const rawIds = ids.map(item => typeof item === 'object' && item !== null ? item.id : item);
+    const videos = await Video.findAll({ where: { id: rawIds } });
+    
+    return videos.map(v => {
+        const itemIndex = ids.findIndex(item => (typeof item === 'object' && item !== null ? item.id : item) == v.id);
+        const item = ids[itemIndex];
+        const orden = typeof item === 'object' && item !== null ? item.orden : itemIndex + 1;
+        v.TotemVideo = { orden };
+        return v;
+    });
+};
+
 exports.getAll = async (req, res) => {
     try {
         const totems = await Totem.findAll({
@@ -69,14 +83,8 @@ exports.create = async (req, res) => {
         const totem = await Totem.create({ identificador, direccion, latitud, longitud });
 
         if (video_ids && video_ids.length > 0) {
-            // Soporta tanto arreglo de IDs [1, 2] como de objetos [{id: 1, orden: 10}]
-            const videosWithOrder = video_ids.map((item, index) => {
-                if (typeof item === 'object' && item !== null) {
-                    return { id: item.id, through: { orden: item.orden } };
-                }
-                return { id: item, through: { orden: index + 1 } };
-            });
-            await totem.setVideos(videosWithOrder);
+            const videosToSet = await processVideoIds(video_ids);
+            await totem.setVideos(videosToSet);
         }
 
         res.status(201).json(totem);
@@ -100,14 +108,8 @@ exports.update = async (req, res) => {
         });
 
         if (video_ids) {
-            // Soporta tanto arreglo de IDs [1, 2] como de objetos [{id: 1, orden: 10}]
-            const videosWithOrder = video_ids.map((item, index) => {
-                if (typeof item === 'object' && item !== null) {
-                    return { id: item.id, through: { orden: item.orden } };
-                }
-                return { id: item, through: { orden: index + 1 } };
-            });
-            await totem.setVideos(videosWithOrder);
+            const videosToSet = await processVideoIds(video_ids);
+            await totem.setVideos(videosToSet);
         }
 
         res.json(totem);
@@ -125,14 +127,8 @@ exports.patch = async (req, res) => {
         await totem.update(req.body);
 
         if (req.body.video_ids) {
-            // Soporta tanto arreglo de IDs [1, 2] como de objetos [{id: 1, orden: 10}]
-            const videosWithOrder = req.body.video_ids.map((item, index) => {
-                if (typeof item === 'object' && item !== null) {
-                    return { id: item.id, through: { orden: item.orden } };
-                }
-                return { id: item, through: { orden: index + 1 } };
-            });
-            await totem.setVideos(videosWithOrder);
+            const videosToSet = await processVideoIds(req.body.video_ids);
+            await totem.setVideos(videosToSet);
         }
 
         res.json(totem);
