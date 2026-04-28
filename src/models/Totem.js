@@ -27,6 +27,14 @@ const Totem = sequelize.define('Totem', {
     status: {
         type: DataTypes.BOOLEAN,
         defaultValue: true
+    },
+    is_online: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
+    ultimo_login: {
+        type: DataTypes.DATE,
+        allowNull: true
     }
 }, {
     tableName: 'totems',

@@ -276,6 +276,12 @@ exports.loginTotem = async (req, res) => {
             { expiresIn: '365d' }
         );
 
+        // Actualizar estado de conexión
+        await totem.update({
+            is_online: true,
+            ultimo_login: new Date()
+        });
+
         res.json({
             message: 'Login de tótem exitoso',
             token,
@@ -285,6 +291,23 @@ exports.loginTotem = async (req, res) => {
                 direccion: totem.direccion
             }
         });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.logoutTotem = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const totem = await Totem.findByPk(id);
+        
+        if (!totem) {
+            return res.status(404).json({ message: 'Totem no encontrado' });
+        }
+
+        await totem.update({ is_online: false });
+
+        res.json({ message: 'Totem desconectado exitosamente' });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

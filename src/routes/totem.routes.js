@@ -89,6 +89,24 @@ router.post('/login', totemController.loginTotem);
 
 /**
  * @swagger
+ * /api/totems/{id}/logout:
+ *   post:
+ *     summary: Marca un totem como desconectado (offline)
+ *     tags: [Totems]
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Totem desconectado exitosamente
+ */
+router.post('/:id/logout', authMiddleware, totemController.logoutTotem);
+
+/**
+ * @swagger
  * /api/totems/{id}:
  *   get:
  *     summary: Obtiene un totem por ID
