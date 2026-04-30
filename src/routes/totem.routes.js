@@ -29,6 +29,11 @@ const roleMiddleware = require('../middlewares/role.middleware');
  *           format: float
  *         status:
  *           type: boolean
+ *         is_online:
+ *           type: boolean
+ *         ultimo_login:
+ *           type: string
+ *           format: date-time
  */
 
 /**
