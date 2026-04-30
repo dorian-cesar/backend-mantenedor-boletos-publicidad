@@ -10,6 +10,11 @@ exports.create = async (req, res) => {
             return res.status(400).json({ message: 'Se requiere totem_id para una API Key de tipo TOTEM' });
         }
 
+        // Si es tipo PLATAFORMA, no debe permitir totem_id
+        if (tipo === 'PLATAFORMA' && totem_id) {
+            return res.status(400).json({ message: 'Una API Key de tipo PLATAFORMA no puede tener un totem_id asociado' });
+        }
+
         let key;
         if (tipo === 'TOTEM') {
             // Generamos una llave corta de 6 caracteres alfanuméricos para los tótems
@@ -60,6 +65,11 @@ exports.update = async (req, res) => {
         // Si se cambia a tipo TOTEM, validamos que venga el totem_id
         if (tipo === 'TOTEM' && !totem_id) {
             return res.status(400).json({ message: 'Se requiere totem_id para una API Key de tipo TOTEM' });
+        }
+
+        // Si se cambia a tipo PLATAFORMA, no debe permitir totem_id
+        if (tipo === 'PLATAFORMA' && totem_id) {
+            return res.status(400).json({ message: 'Una API Key de tipo PLATAFORMA no puede tener un totem_id asociado' });
         }
 
         const updateData = {};
