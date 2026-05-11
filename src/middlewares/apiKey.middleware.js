@@ -12,9 +12,7 @@ const apiKeyMiddleware = async (req, res, next) => {
     const apiKeyHeader = req.headers['x-api-key'] || req.query.apiKey;
 
     if (!apiKeyHeader) {
-        return res.status(403).json({
-            message: 'Acceso denegado: API Key no proporcionada'
-        });
+        return next();
     }
 
     // Buscamos la llave en la base de datos e incluimos el tótem si aplica

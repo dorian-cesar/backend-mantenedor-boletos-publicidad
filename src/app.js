@@ -22,6 +22,15 @@ app.use(express.urlencoded({ extended: true }));
 // Static files (for uploaded videos)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
+// Root route
+app.get('/', (req, res) => {
+    res.json({ 
+        message: 'API Mantenedor Boletos Publicidad',
+        status: 'running',
+        docs: '/api-docs'
+    });
+});
+
 // Routes
 app.use('/api', routes);
 
