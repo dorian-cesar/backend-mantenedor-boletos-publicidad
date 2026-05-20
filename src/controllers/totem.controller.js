@@ -69,6 +69,7 @@ exports.getPlaylist = async (req, res) => {
         res.json({
             totem_id: totem.id,
             identificador: totem.identificador,
+            block_screen_saver: totem.block_screen_saver,
             total_videos: playlist.length,
             playlist
         });
@@ -79,8 +80,8 @@ exports.getPlaylist = async (req, res) => {
 
 exports.create = async (req, res) => {
     try {
-        const { identificador, direccion, latitud, longitud, video_ids } = req.body;
-        const totem = await Totem.create({ identificador, direccion, latitud, longitud });
+        const { identificador, direccion, latitud, longitud, block_screen_saver, video_ids } = req.body;
+        const totem = await Totem.create({ identificador, direccion, latitud, longitud, block_screen_saver });
 
         if (video_ids && video_ids.length > 0) {
             const videosToSet = await processVideoIds(video_ids);
@@ -95,7 +96,7 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
     try {
-        const { identificador, direccion, latitud, longitud, video_ids } = req.body;
+        const { identificador, direccion, latitud, longitud, block_screen_saver, video_ids } = req.body;
         const totem = await Totem.findByPk(req.params.id);
         if (!totem) return res.status(404).json({ message: 'Totem no encontrado' });
 
@@ -104,7 +105,8 @@ exports.update = async (req, res) => {
             identificador: identificador || totem.identificador, 
             direccion: direccion || totem.direccion, 
             latitud: latitud !== undefined ? latitud : totem.latitud, 
-            longitud: longitud !== undefined ? longitud : totem.longitud 
+            longitud: longitud !== undefined ? longitud : totem.longitud,
+            block_screen_saver: block_screen_saver !== undefined ? block_screen_saver : totem.block_screen_saver
         });
 
         if (video_ids) {

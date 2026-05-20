@@ -35,6 +35,10 @@ const Totem = sequelize.define('Totem', {
     ultimo_login: {
         type: DataTypes.DATE,
         allowNull: true
+    },
+    block_screen_saver: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
     }
 }, {
     tableName: 'totems',

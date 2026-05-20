@@ -27,6 +27,8 @@ const roleMiddleware = require('../middlewares/role.middleware');
  *         longitud:
  *           type: number
  *           format: float
+ *         block_screen_saver:
+ *           type: boolean
  *         status:
  *           type: boolean
  *         is_online:
@@ -167,6 +169,8 @@ router.get('/:id/playlist', authMiddleware, totemController.getPlaylist);
  *                 type: number
  *               longitud:
  *                 type: number
+ *               block_screen_saver:
+ *                 type: boolean
  *               video_ids:
  *                 type: array
  *                 items:
@@ -204,6 +208,8 @@ router.post('/', [authMiddleware, roleMiddleware(['ADMIN'])], totemController.cr
  *                 type: number
  *               longitud:
  *                 type: number
+ *               block_screen_saver:
+ *                 type: boolean
  *               video_ids:
  *                 type: array
  *                 items:
@@ -240,6 +246,8 @@ router.put('/:id', [authMiddleware, roleMiddleware(['ADMIN'])], totemController.
  *                 type: number
  *               longitud:
  *                 type: number
+ *               block_screen_saver:
+ *                 type: boolean
  *               video_ids:
  *                 type: array
  *                 items:

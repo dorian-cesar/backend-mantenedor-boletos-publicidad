@@ -33,3 +33,12 @@ logs/
 
 # Scripts
 # scripts/
+
+# pem
+*boletos.pem
+
+# postman_collection
+postman_collection.json
+
+# Scratch files
+scratch/
