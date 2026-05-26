@@ -149,3 +149,82 @@ exports.bulkUpdateOrder = async (req, res) => {
         res.status(500).json({ message: error.message });
     }
 };
+
+exports.uploadChunk = async (req, res) => {
+    try {
+        const { chunkIndex, totalChunks, identifier, originalName, nombre, descripcion, empresa_id } = req.body;
+        
+        if (!req.file) return res.status(400).json({ message: 'No se envió ningún fragmento (chunk)' });
+
+        const chunkDir = path.join(__dirname, '../../uploads/', `chunks_${identifier}`);
+        if (!fs.existsSync(chunkDir)) {
+            fs.mkdirSync(chunkDir, { recursive: true });
+        }
+
+        const chunkPath = path.join(chunkDir, `chunk_${chunkIndex}`);
+        fs.renameSync(req.file.path, chunkPath);
+
+        const currentIndex = parseInt(chunkIndex);
+        const total = parseInt(totalChunks);
+
+        if (currentIndex === total - 1) {
+            // Unir los chunks
+            const finalFilename = `${Date.now()}-${originalName}`;
+            const finalPath = path.join(__dirname, '../../uploads/', finalFilename);
+            
+            const writeStream = fs.createWriteStream(finalPath);
+            
+            for (let i = 0; i < total; i++) {
+                const currentChunkPath = path.join(chunkDir, `chunk_${i}`);
+                if (fs.existsSync(currentChunkPath)) {
+                    const data = fs.readFileSync(currentChunkPath);
+                    writeStream.write(data);
+                    fs.unlinkSync(currentChunkPath);
+                } else {
+                    return res.status(400).json({ message: `Falta el fragmento ${i}` });
+                }
+            }
+            writeStream.end();
+            fs.rmdirSync(chunkDir);
+
+            // Crear registro en la BD
+            let videoUrl = `/uploads/${finalFilename}`;
+            
+            const ext = path.extname(originalName).toLowerCase();
+            if (ext === '.zip') {
+                const zip = new AdmZip(finalPath);
+                const zipEntries = zip.getEntries();
+                const videoEntry = zipEntries.find(entry => entry.entryName.toLowerCase().endsWith('.mp4'));
+
+                if (videoEntry) {
+                    const newFilename = `${Date.now()}-${videoEntry.entryName}`;
+                    zip.extractEntryTo(videoEntry, 'uploads/', false, true, newFilename);
+                    videoUrl = `/uploads/${newFilename}`;
+                    fs.unlinkSync(finalPath);
+                }
+            }
+
+            const lastVideo = await Video.findOne({
+                where: { empresa_id },
+                order: [['orden', 'DESC']]
+            });
+            const nextOrder = lastVideo ? lastVideo.orden + 1 : 1;
+
+            const video = await Video.create({
+                nombre: nombre || originalName,
+                descripcion,
+                url: videoUrl,
+                empresa_id,
+                status: true,
+                orden: nextOrder
+            });
+
+            return res.status(201).json(video);
+        }
+
+        res.json({ message: 'Chunk recibido', chunkIndex });
+    } catch (error) {
+        console.error("Error en uploadChunk:", error);
+        res.status(500).json({ message: error.message });
+    }
+};

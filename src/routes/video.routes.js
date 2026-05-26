@@ -70,6 +70,20 @@ router.get('/:id', authMiddleware, videoController.getById);
 
 /**
  * @swagger
+ * /api/videos/chunk:
+ *   post:
+ *     summary: Sube un fragmento de video para subidas con reanudación (resumables)
+ *     tags: [Videos]
+ *     responses:
+ *       200:
+ *         description: Fragmento recibido
+ *       201:
+ *         description: Todos los fragmentos recibidos, video creado
+ */
+router.post('/chunk', [authMiddleware, roleMiddleware(['ADMIN', 'USER']), upload.single('chunk')], videoController.uploadChunk);
+
+/**
+ * @swagger
  * /api/videos:
  *   post:
  *     summary: Sube un nuevo video o archivo comprimido
