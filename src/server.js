@@ -1,9 +1,6 @@
 require('dotenv').config();
 const app = require('./app');
 const sequelize = require('./config/database');
-const fs = require('fs');
-const path = require('path');
-const { startUploadCleaner } = require('./utils/uploadCleaner');
 
 // El puerto se usará directamente desde process.env
 
@@ -16,11 +13,6 @@ async function startServer() {
         await sequelize.sync();
         console.log('Modelos sincronizados correctamente.');
 
-        // Crear directorio de chunks si no existe
-        const chunksDir = path.join(__dirname, '../uploads/chunks');
-        fs.mkdirSync(chunksDir, { recursive: true });
-        console.log('Directorio de chunks verificado.');
-
         // Seeding de Roles iniciales
         const Rol = require('./models/Rol');
         const roles = ['ADMIN', 'USER', 'TOTEM'];
@@ -28,9 +20,6 @@ async function startServer() {
             await Rol.findOrCreate({ where: { nombre } });
         }
         console.log('Roles inicializados.');
-
-        // Iniciar limpieza periódica de uploads expirados
-        startUploadCleaner();
 
         app.listen(process.env.PORT || 3000, () => {
             console.log(`Servidor corriendo en el puerto ${process.env.PORT || 3000}`);
