@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const path = require('path');
 const videoController = require('../controllers/video.controller');
 const upload = require('../config/multer');
 const authMiddleware = require('../middlewares/auth.middleware');
