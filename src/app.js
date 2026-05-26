@@ -25,11 +25,11 @@ app.use((req, res, next) => {
     if (req.path.startsWith('/api/videos/upload') && req.method === 'PUT') {
         return next();
     }
-    express.json({ limit: '10mb' })(req, res, next);
+    express.json({ limit: '100mb' })(req, res, next);
 });
 
 app.use(apiKeyMiddleware);
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({ extended: true, limit: '100mb' }));
 
 // Static files (for uploaded videos)
 app.use('/uploads', express.static(path.join(__dirname, '../uploads')));

@@ -38,8 +38,8 @@ exports.initUpload = async (req, res) => {
             return res.status(404).json({ message: 'Empresa no encontrada' });
         }
 
-        // Validar tamaño máximo (100MB por defecto, configurable)
-        const maxSize = parseInt(process.env.MAX_UPLOAD_SIZE) || (100 * 1024 * 1024);
+        // Validar tamaño máximo (1GB por defecto, configurable)
+        const maxSize = parseInt(process.env.MAX_UPLOAD_SIZE) || (1000 * 1024 * 1024);
         if (total_size > maxSize) {
             return res.status(400).json({
                 message: `El archivo excede el tamaño máximo permitido (${Math.round(maxSize / 1024 / 1024)}MB)`
