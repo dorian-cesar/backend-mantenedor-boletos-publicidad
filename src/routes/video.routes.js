@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const path = require('path');
 const videoController = require('../controllers/video.controller');
 const upload = require('../config/multer');
 const authMiddleware = require('../middlewares/auth.middleware');
@@ -68,19 +69,27 @@ router.get('/', authMiddleware, videoController.getAll);
  */
 router.get('/:id', authMiddleware, videoController.getById);
 
-/**
- * @swagger
- * /api/videos/chunk:
- *   post:
- *     summary: Sube un fragmento de video para subidas con reanudación (resumables)
- *     tags: [Videos]
- *     responses:
- *       200:
- *         description: Fragmento recibido
- *       201:
- *         description: Todos los fragmentos recibidos, video creado
- */
-router.post('/chunk', [authMiddleware, roleMiddleware(['ADMIN', 'USER']), upload.single('chunk')], videoController.uploadChunk);
+const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
+
+const chunkStorage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        const uniqueSuffix = `${uuidv4()}${path.extname(file.originalname)}`;
+        cb(null, uniqueSuffix);
+    }
+});
+
+const chunkUpload = multer({
+    storage: chunkStorage,
+    limits: {
+        fileSize: 100 * 1024 * 1024
+    }
+});
+
+router.post('/chunk', [authMiddleware, roleMiddleware(['ADMIN', 'USER']), chunkUpload.single('chunk')], videoController.uploadChunk);
 
 /**
  * @swagger
