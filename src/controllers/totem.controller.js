@@ -1,5 +1,7 @@
-const { Totem, Video, ApiKey, TotemVideo } = require('../models');
+const { Totem, Video, ApiKey, TotemVideo, VentaBoleto } = require('../models');
 const jwt = require('jsonwebtoken');
+const sequelize = require('../config/database');
+const { fn, col, literal } = require('sequelize');
 
 const processVideoIds = async (ids) => {
     if (!ids || ids.length === 0) return [];
@@ -20,7 +22,50 @@ exports.getAll = async (req, res) => {
         const totems = await Totem.findAll({
             include: [{ model: Video, as: 'videos', through: { attributes: ['orden'] } }]
         });
-        res.json(totems);
+
+        // Obtener conteo de boletos vendidos por totem
+        const ventasPorTotem = await VentaBoleto.findAll({
+            attributes: [
+                'totem_id',
+                [fn('COUNT', col('id')), 'total_transacciones'],
+                [fn('SUM', fn('JSON_LENGTH', col('ticket_numbers'))), 'boletos_vendidos']
+            ],
+            where: { status: 'success' },
+            group: ['totem_id'],
+            raw: true
+        });
+
+        // Crear mapa de conteos por totem_id
+        const ventasMap = {};
+        ventasPorTotem.forEach(v => {
+            ventasMap[v.totem_id] = {
+                total_transacciones: parseInt(v.total_transacciones) || 0,
+                boletos_vendidos: parseInt(v.boletos_vendidos) || 0
+            };
+        });
+
+        // Agregar conteo a cada totem
+        const totemsConBoletos = totems.map(t => {
+            const totemJSON = t.toJSON();
+            const stats = ventasMap[t.id] || { total_transacciones: 0, boletos_vendidos: 0 };
+            return {
+                ...totemJSON,
+                total_transacciones: stats.total_transacciones,
+                boletos_vendidos: stats.boletos_vendidos
+            };
+        });
+
+        // Total global
+        const boletos_vendidos_global = ventasPorTotem.reduce((sum, v) => sum + (parseInt(v.boletos_vendidos) || 0), 0);
+        const transacciones_global = ventasPorTotem.reduce((sum, v) => sum + (parseInt(v.total_transacciones) || 0), 0);
+
+        res.json({
+            resumen_global: {
+                total_transacciones: transacciones_global,
+                boletos_vendidos: boletos_vendidos_global
+            },
+            totems: totemsConBoletos
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -32,7 +77,23 @@ exports.getById = async (req, res) => {
             include: [{ model: Video, as: 'videos', through: { attributes: ['orden'] } }]
         });
         if (!totem) return res.status(404).json({ message: 'Totem no encontrado' });
-        res.json(totem);
+
+        // Obtener conteo de boletos vendidos para este totem
+        const stats = await VentaBoleto.findOne({
+            attributes: [
+                [fn('COUNT', col('id')), 'total_transacciones'],
+                [fn('SUM', fn('JSON_LENGTH', col('ticket_numbers'))), 'boletos_vendidos']
+            ],
+            where: { totem_id: req.params.id, status: 'success' },
+            raw: true
+        });
+
+        const totemJSON = totem.toJSON();
+        res.json({
+            ...totemJSON,
+            total_transacciones: parseInt(stats?.total_transacciones) || 0,
+            boletos_vendidos: parseInt(stats?.boletos_vendidos) || 0
+        });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
