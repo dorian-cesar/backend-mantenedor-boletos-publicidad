@@ -6,6 +6,8 @@ const Totem = require('./Totem');
 const TotemVideo = require('./TotemVideo');
 const ApiKey = require('./ApiKey');
 const VentaBoleto = require('./VentaBoleto');
+const InteraccionTotem = require('./InteraccionTotem');
+const UploadSession = require('./UploadSession');
 
 // Las asociaciones ya están definidas dentro de los archivos de los modelos,
 // pero para asegurarnos de que se carguen todas, las importamos aquí.
@@ -17,6 +19,10 @@ ApiKey.belongsTo(Totem, { foreignKey: 'totem_id', as: 'totem', onDelete: 'NO ACT
 Totem.hasMany(VentaBoleto, { foreignKey: 'totem_id', as: 'ventas', onDelete: 'NO ACTION' });
 VentaBoleto.belongsTo(Totem, { foreignKey: 'totem_id', as: 'totem', onDelete: 'NO ACTION' });
 
+// Relaciones para InteraccionTotem
+Totem.hasMany(InteraccionTotem, { foreignKey: 'totem_id', as: 'interacciones', onDelete: 'NO ACTION' });
+InteraccionTotem.belongsTo(Totem, { foreignKey: 'totem_id', as: 'totem', onDelete: 'NO ACTION' });
+
 module.exports = {
     Rol,
     Usuario,
@@ -25,5 +31,7 @@ module.exports = {
     Totem,
     TotemVideo,
     ApiKey,
-    VentaBoleto
+    VentaBoleto,
+    InteraccionTotem,
+    UploadSession
 };
