@@ -19,7 +19,15 @@ app.use(cors({
     allowedHeaders: ['Content-Type', 'Authorization', 'x-api-key']
 }));
 app.use(morgan('dev'));
-app.use(express.json());
+
+// Excluir rutas de upload chunked del parseo JSON (multer maneja el multipart)
+app.use((req, res, next) => {
+    if (req.path.startsWith('/api/videos/upload') && req.method === 'PUT') {
+        return next();
+    }
+    express.json({ limit: '10mb' })(req, res, next);
+});
+
 app.use(apiKeyMiddleware);
 app.use(express.urlencoded({ extended: true }));
 
