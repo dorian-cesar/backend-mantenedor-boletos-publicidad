@@ -311,6 +311,13 @@ exports.loginTotem = async (req, res) => {
             return res.status(404).json({ message: 'Totem no encontrado' });
         }
 
+        // Validamos que no esté ya en uso/activo en otra instancia
+        if (totem.is_online) {
+            return res.status(409).json({ 
+                message: 'Este ID de tótem ya está siendo usado por otra instancia activa.' 
+            });
+        }
+
         // Validamos que el API Key exista, sea de tipo TOTEM y esté asociada a este totem
         const keyRecord = await ApiKey.findOne({ 
             where: { 
