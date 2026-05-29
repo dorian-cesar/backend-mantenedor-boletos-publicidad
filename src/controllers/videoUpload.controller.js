@@ -273,6 +273,8 @@ exports.completeUpload = async (req, res) => {
 
             // Verificar tamaño del archivo final
             const stats = fs.statSync(finalPath);
+            let peso = stats.size;
+            let extension = ext;
             console.log(`[VideoUpload] Archivo ensamblado: ${finalPath} (${stats.size} bytes)`);
 
             let videoUrl = `/uploads/${finalFilename}`;
@@ -290,6 +292,11 @@ exports.completeUpload = async (req, res) => {
                     const uploadsDir = path.join(__dirname, '../../uploads');
                     zip.extractEntryTo(videoEntry, uploadsDir, false, true, false, newFilename);
                     videoUrl = `/uploads/${newFilename}`;
+                    
+                    const extractedStats = fs.statSync(path.join(uploadsDir, newFilename));
+                    peso = extractedStats.size;
+                    extension = '.mp4';
+                    
                     // Borrar el zip ensamblado
                     fs.unlinkSync(finalPath);
                 }
@@ -308,6 +315,8 @@ exports.completeUpload = async (req, res) => {
                 descripcion: session.descripcion,
                 url: videoUrl,
                 empresa_id: session.empresa_id,
+                peso: peso,
+                extension: extension,
                 status: true,
                 orden: nextOrder
             });

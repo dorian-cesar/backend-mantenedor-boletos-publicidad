@@ -33,6 +33,8 @@ exports.create = async (req, res) => {
 
         let videoUrl = `/uploads/${req.file.filename}`;
         const ext = path.extname(req.file.originalname).toLowerCase();
+        let peso = req.file.size;
+        let extension = ext;
 
         // Lógica de descompresión si es un ZIP
         if (ext === '.zip') {
@@ -44,6 +46,11 @@ exports.create = async (req, res) => {
                 const newFilename = `${Date.now()}-${videoEntry.entryName}`;
                 zip.extractEntryTo(videoEntry, 'uploads/', false, true, newFilename);
                 videoUrl = `/uploads/${newFilename}`;
+                
+                const stats = fs.statSync(path.join('uploads', newFilename));
+                peso = stats.size;
+                extension = '.mp4';
+
                 // Opcional: borrar el zip original
                 fs.unlinkSync(req.file.path);
             }
@@ -61,6 +68,8 @@ exports.create = async (req, res) => {
             descripcion,
             url: videoUrl,
             empresa_id,
+            peso,
+            extension,
             status: true,
             orden: nextOrder
         });
@@ -90,6 +99,8 @@ exports.update = async (req, res) => {
         if (req.file) {
             let videoUrl = `/uploads/${req.file.filename}`;
             const ext = path.extname(req.file.originalname).toLowerCase();
+            let peso = req.file.size;
+            let extension = ext;
 
             // Lógica de descompresión si es un ZIP
             if (ext === '.zip') {
@@ -101,6 +112,11 @@ exports.update = async (req, res) => {
                     const newFilename = `${Date.now()}-${videoEntry.entryName}`;
                     zip.extractEntryTo(videoEntry, 'uploads/', false, true, newFilename);
                     videoUrl = `/uploads/${newFilename}`;
+                    
+                    const stats = fs.statSync(path.join('uploads', newFilename));
+                    peso = stats.size;
+                    extension = '.mp4';
+                    
                     fs.unlinkSync(req.file.path);
                 }
             }
@@ -110,6 +126,8 @@ exports.update = async (req, res) => {
             // if (fs.existsSync(oldPath)) fs.unlinkSync(oldPath);
 
             updateData.url = videoUrl;
+            updateData.peso = peso;
+            updateData.extension = extension;
         }
 
         await video.update(updateData);
@@ -189,6 +207,8 @@ exports.uploadChunk = async (req, res) => {
 
             // Crear registro en la BD
             let videoUrl = `/uploads/${finalFilename}`;
+            let peso = fs.statSync(finalPath).size;
+            let extension = path.extname(originalName).toLowerCase();
             
             const ext = path.extname(originalName).toLowerCase();
             if (ext === '.zip') {
@@ -200,6 +220,10 @@ exports.uploadChunk = async (req, res) => {
                     const newFilename = `${Date.now()}-${videoEntry.entryName}`;
                     zip.extractEntryTo(videoEntry, 'uploads/', false, true, newFilename);
                     videoUrl = `/uploads/${newFilename}`;
+                    
+                    peso = fs.statSync(path.join('uploads', newFilename)).size;
+                    extension = '.mp4';
+                    
                     fs.unlinkSync(finalPath);
                 }
             }
@@ -215,6 +239,8 @@ exports.uploadChunk = async (req, res) => {
                 descripcion,
                 url: videoUrl,
                 empresa_id,
+                peso,
+                extension,
                 status: true,
                 orden: nextOrder
             });
