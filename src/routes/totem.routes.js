@@ -112,6 +112,22 @@ router.post('/logout', authMiddleware, totemController.logoutTotem);
 
 /**
  * @swagger
+ * /api/totems/ping:
+ *   post:
+ *     summary: Actualiza el estado del totem (latido/heartbeat) para mantenerlo online
+ *     tags: [Totems]
+ *     security:
+ *       - bearerAuth: []
+ *     responses:
+ *       200:
+ *         description: Ping recibido correctamente
+ *       401:
+ *         description: No autenticado o token inválido
+ */
+router.post('/ping', authMiddleware, totemController.pingTotem);
+
+/**
+ * @swagger
  * /api/totems/{id}:
  *   get:
  *     summary: Obtiene un totem por ID

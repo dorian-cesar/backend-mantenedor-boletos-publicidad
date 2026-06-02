@@ -36,6 +36,10 @@ const Totem = sequelize.define('Totem', {
         type: DataTypes.DATE,
         allowNull: true
     },
+    last_ping: {
+        type: DataTypes.DATE,
+        allowNull: true
+    },
     block_screen_saver: {
         type: DataTypes.BOOLEAN,
         defaultValue: false

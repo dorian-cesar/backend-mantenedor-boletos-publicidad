@@ -311,12 +311,9 @@ exports.loginTotem = async (req, res) => {
             return res.status(404).json({ message: 'Totem no encontrado' });
         }
 
-        // Validamos que no esté ya en uso/activo en otra instancia
-        if (totem.is_online) {
-            return res.status(409).json({ 
-                message: 'Este ID de tótem ya está siendo usado por otra instancia activa.' 
-            });
-        }
+        // Si el tótem ya estaba online (ej: por un corte de luz), permitimos el login igual
+        // ya que las credenciales de la API Key son válidas y provienen del mismo equipo.
+        // Se actualizará is_online y last_ping abajo.
 
         // Validamos que el API Key exista, sea de tipo TOTEM y esté asociada a este totem
         const keyRecord = await ApiKey.findOne({ 
@@ -346,10 +343,11 @@ exports.loginTotem = async (req, res) => {
             { expiresIn: '365d' }
         );
 
-        // Actualizar estado de conexión
+        // Actualizar estado de conexión y last_ping
         await totem.update({
             is_online: true,
-            ultimo_login: new Date()
+            ultimo_login: new Date(),
+            last_ping: new Date()
         });
 
         res.json({
@@ -381,9 +379,33 @@ exports.logoutTotem = async (req, res) => {
             return res.status(404).json({ message: 'Totem no encontrado' });
         }
 
-        await totem.update({ is_online: false });
+        await totem.update({ is_online: false, last_ping: new Date() });
 
         res.json({ message: 'Totem desconectado exitosamente' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
+exports.pingTotem = async (req, res) => {
+    try {
+        const id = req.user?.id;
+        if (!id) {
+            return res.status(401).json({ message: 'No autenticado o token inválido' });
+        }
+
+        const totem = await Totem.findByPk(id);
+        if (!totem) {
+            return res.status(404).json({ message: 'Totem no encontrado' });
+        }
+
+        // Actualizamos el last_ping y aseguramos que esté online
+        await totem.update({ 
+            is_online: true,
+            last_ping: new Date() 
+        });
+
+        res.json({ message: 'Ping recibido', last_ping: totem.last_ping });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

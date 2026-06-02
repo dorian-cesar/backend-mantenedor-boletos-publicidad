@@ -32,6 +32,10 @@ async function startServer() {
         // Iniciar limpieza periódica de uploads expirados
         startUploadCleaner();
 
+        // Iniciar monitor de tótems (latidos)
+        const { startTotemMonitor } = require('./utils/totemMonitor');
+        startTotemMonitor();
+
         app.listen(process.env.PORT || 3000, () => {
             console.log(`Servidor corriendo en el puerto ${process.env.PORT || 3000}`);
         });
