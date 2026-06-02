@@ -96,21 +96,19 @@ router.post('/login', totemController.loginTotem);
 
 /**
  * @swagger
- * /api/totems/{id}/logout:
+ * /api/totems/logout:
  *   post:
- *     summary: Marca un totem como desconectado (offline)
+ *     summary: Marca un totem como desconectado (offline) usando su token
  *     tags: [Totems]
- *     parameters:
- *       - in: path
- *         name: id
- *         required: true
- *         schema:
- *           type: integer
+ *     security:
+ *       - bearerAuth: []
  *     responses:
  *       200:
  *         description: Totem desconectado exitosamente
+ *       401:
+ *         description: No autenticado o token inválido
  */
-router.post('/:id/logout', authMiddleware, totemController.logoutTotem);
+router.post('/logout', authMiddleware, totemController.logoutTotem);
 
 /**
  * @swagger

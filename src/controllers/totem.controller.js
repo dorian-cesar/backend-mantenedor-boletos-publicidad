@@ -368,7 +368,13 @@ exports.loginTotem = async (req, res) => {
 
 exports.logoutTotem = async (req, res) => {
     try {
-        const { id } = req.params;
+        // Obtenemos el ID del totem directamente del token (authMiddleware)
+        const id = req.user?.id;
+        
+        if (!id) {
+            return res.status(401).json({ message: 'No autenticado o token inválido' });
+        }
+
         const totem = await Totem.findByPk(id);
         
         if (!totem) {
