@@ -112,6 +112,28 @@ router.post('/logout', authMiddleware, totemController.logoutTotem);
 
 /**
  * @swagger
+ * /api/totems/{id}/logout:
+ *   post:
+ *     summary: Forzar la desvinculación (logout) de un totem específico por ID (uso para administradores)
+ *     tags: [Totems]
+ *     security:
+ *       - bearerAuth: []
+ *     parameters:
+ *       - in: path
+ *         name: id
+ *         required: true
+ *         schema:
+ *           type: integer
+ *     responses:
+ *       200:
+ *         description: Totem desvinculado exitosamente por administrador
+ *       401:
+ *         description: No autenticado o token inválido
+ */
+router.post('/:id/logout', [authMiddleware, roleMiddleware(['ADMIN'])], totemController.forceLogoutTotem);
+
+/**
+ * @swagger
  * /api/totems/ping:
  *   post:
  *     summary: Actualiza el estado del totem (latido/heartbeat) para mantenerlo online

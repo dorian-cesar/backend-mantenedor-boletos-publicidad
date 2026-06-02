@@ -387,6 +387,24 @@ exports.logoutTotem = async (req, res) => {
     }
 };
 
+exports.forceLogoutTotem = async (req, res) => {
+    try {
+        const { id } = req.params;
+        const totem = await Totem.findByPk(id);
+        
+        if (!totem) {
+            return res.status(404).json({ message: 'Totem no encontrado' });
+        }
+
+        // Forzamos offline y reseteamos el last_ping para que el monitor y panel lo vean offline
+        await totem.update({ is_online: false, last_ping: null });
+
+        res.json({ message: 'Totem desvinculado exitosamente por administrador' });
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+};
+
 exports.pingTotem = async (req, res) => {
     try {
         const id = req.user?.id;
