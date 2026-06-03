@@ -1,5 +1,8 @@
 const ffmpeg = require('fluent-ffmpeg');
+const ffprobeStatic = require('ffprobe-static');
 
+// Configuramos fluent-ffmpeg para que use el binario estático incluido
+ffmpeg.setFfprobePath(ffprobeStatic.path);
 /**
  * Extrae la resolución de un archivo de video
  * @param {string} filePath Ruta absoluta o relativa al archivo de video
