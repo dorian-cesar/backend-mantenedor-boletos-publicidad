@@ -12,8 +12,8 @@ async function startServer() {
         await sequelize.authenticate();
         console.log('Conexión a la base de datos establecida correctamente.');
         
-        // Sincronizar modelos (solo para desarrollo)
-        await sequelize.sync();
+        // Sincronizar modelos (solo para desarrollo/alter: true para auto migración)
+        await sequelize.sync({ alter: true });
         console.log('Modelos sincronizados correctamente.');
 
         // Crear directorio de chunks si no existe
