@@ -13,13 +13,13 @@ const storage = multer.diskStorage({
 });
 
 const fileFilter = (req, file, cb) => {
-    const allowedExtensions = ['.mp4', '.zip', '.rar'];
+    const allowedExtensions = ['.mp4', '.mov', '.zip', '.rar'];
     const ext = path.extname(file.originalname).toLowerCase();
     
     if (allowedExtensions.includes(ext)) {
         cb(null, true);
     } else {
-        cb(new Error('Formato de archivo no soportado. Solo MP4, ZIP o RAR.'), false);
+        cb(new Error('Formato de archivo no soportado. Solo MP4, MOV, ZIP o RAR.'), false);
     }
 };
 

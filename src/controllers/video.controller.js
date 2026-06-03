@@ -2,6 +2,7 @@ const { Video, Empresa } = require('../models');
 const AdmZip = require('adm-zip');
 const path = require('path');
 const fs = require('fs');
+const { getVideoResolution } = require('../utils/videoMeta');
 
 exports.getAll = async (req, res) => {
     try {
@@ -36,24 +37,34 @@ exports.create = async (req, res) => {
         let peso = req.file.size;
         let extension = ext;
 
+        let resolucion = null;
+
         // Lógica de descompresión si es un ZIP
         if (ext === '.zip') {
             const zip = new AdmZip(req.file.path);
             const zipEntries = zip.getEntries();
-            const videoEntry = zipEntries.find(entry => entry.entryName.toLowerCase().endsWith('.mp4'));
+            const videoEntry = zipEntries.find(entry => 
+                entry.entryName.toLowerCase().endsWith('.mp4') || 
+                entry.entryName.toLowerCase().endsWith('.mov')
+            );
 
             if (videoEntry) {
                 const newFilename = `${Date.now()}-${videoEntry.entryName}`;
                 zip.extractEntryTo(videoEntry, 'uploads/', false, true, newFilename);
                 videoUrl = `/uploads/${newFilename}`;
                 
-                const stats = fs.statSync(path.join('uploads', newFilename));
+                const finalPath = path.join('uploads', newFilename);
+                const stats = fs.statSync(finalPath);
                 peso = stats.size;
-                extension = '.mp4';
+                extension = path.extname(newFilename).toLowerCase();
+                resolucion = await getVideoResolution(finalPath);
 
                 // Opcional: borrar el zip original
                 fs.unlinkSync(req.file.path);
             }
+        } else {
+            // No es zip, extraer resolución directo del archivo subido
+            resolucion = await getVideoResolution(req.file.path);
         }
 
         // Calcular el siguiente número de orden para esta empresa
@@ -70,6 +81,7 @@ exports.create = async (req, res) => {
             empresa_id,
             peso,
             extension,
+            resolucion,
             status: true,
             orden: nextOrder
         });
@@ -102,23 +114,32 @@ exports.update = async (req, res) => {
             let peso = req.file.size;
             let extension = ext;
 
+            let resolucion = null;
+
             // Lógica de descompresión si es un ZIP
             if (ext === '.zip') {
                 const zip = new AdmZip(req.file.path);
                 const zipEntries = zip.getEntries();
-                const videoEntry = zipEntries.find(entry => entry.entryName.toLowerCase().endsWith('.mp4'));
+                const videoEntry = zipEntries.find(entry => 
+                    entry.entryName.toLowerCase().endsWith('.mp4') || 
+                    entry.entryName.toLowerCase().endsWith('.mov')
+                );
 
                 if (videoEntry) {
                     const newFilename = `${Date.now()}-${videoEntry.entryName}`;
                     zip.extractEntryTo(videoEntry, 'uploads/', false, true, newFilename);
                     videoUrl = `/uploads/${newFilename}`;
                     
-                    const stats = fs.statSync(path.join('uploads', newFilename));
+                    const finalPath = path.join('uploads', newFilename);
+                    const stats = fs.statSync(finalPath);
                     peso = stats.size;
-                    extension = '.mp4';
+                    extension = path.extname(newFilename).toLowerCase();
+                    resolucion = await getVideoResolution(finalPath);
                     
                     fs.unlinkSync(req.file.path);
                 }
+            } else {
+                resolucion = await getVideoResolution(req.file.path);
             }
             
             // Opcional: borrar el archivo anterior si es diferente
@@ -128,6 +149,7 @@ exports.update = async (req, res) => {
             updateData.url = videoUrl;
             updateData.peso = peso;
             updateData.extension = extension;
+            if (resolucion) updateData.resolucion = resolucion;
         }
 
         await video.update(updateData);
@@ -210,22 +232,31 @@ exports.uploadChunk = async (req, res) => {
             let peso = fs.statSync(finalPath).size;
             let extension = path.extname(originalName).toLowerCase();
             
+            let resolucion = null;
+            
             const ext = path.extname(originalName).toLowerCase();
             if (ext === '.zip') {
                 const zip = new AdmZip(finalPath);
                 const zipEntries = zip.getEntries();
-                const videoEntry = zipEntries.find(entry => entry.entryName.toLowerCase().endsWith('.mp4'));
+                const videoEntry = zipEntries.find(entry => 
+                    entry.entryName.toLowerCase().endsWith('.mp4') || 
+                    entry.entryName.toLowerCase().endsWith('.mov')
+                );
 
                 if (videoEntry) {
                     const newFilename = `${Date.now()}-${videoEntry.entryName}`;
                     zip.extractEntryTo(videoEntry, 'uploads/', false, true, newFilename);
                     videoUrl = `/uploads/${newFilename}`;
                     
-                    peso = fs.statSync(path.join('uploads', newFilename)).size;
-                    extension = '.mp4';
+                    const extractedPath = path.join('uploads', newFilename);
+                    peso = fs.statSync(extractedPath).size;
+                    extension = path.extname(newFilename).toLowerCase();
+                    resolucion = await getVideoResolution(extractedPath);
                     
                     fs.unlinkSync(finalPath);
                 }
+            } else {
+                resolucion = await getVideoResolution(finalPath);
             }
 
             const lastVideo = await Video.findOne({
@@ -241,6 +272,7 @@ exports.uploadChunk = async (req, res) => {
                 empresa_id,
                 peso,
                 extension,
+                resolucion,
                 status: true,
                 orden: nextOrder
             });

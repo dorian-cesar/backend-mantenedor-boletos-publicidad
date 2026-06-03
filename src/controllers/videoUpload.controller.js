@@ -4,6 +4,7 @@ const AdmZip = require('adm-zip');
 const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
+const { getVideoResolution } = require('../utils/videoMeta');
 
 const CHUNK_SIZE = parseInt(process.env.CHUNK_SIZE) || (2 * 1024 * 1024); // 2MB default
 const UPLOAD_EXPIRY_HOURS = parseInt(process.env.UPLOAD_EXPIRY_HOURS) || 24;
@@ -25,7 +26,7 @@ exports.initUpload = async (req, res) => {
 
         // Validar extensión
         const ext = path.extname(filename).toLowerCase();
-        const allowedExtensions = ['.mp4', '.zip', '.rar'];
+        const allowedExtensions = ['.mp4', '.mov', '.zip', '.rar'];
         if (!allowedExtensions.includes(ext)) {
             return res.status(400).json({
                 message: `Formato no soportado. Solo: ${allowedExtensions.join(', ')}`
@@ -275,6 +276,7 @@ exports.completeUpload = async (req, res) => {
             const stats = fs.statSync(finalPath);
             let peso = stats.size;
             let extension = ext;
+            let resolucion = null;
             console.log(`[VideoUpload] Archivo ensamblado: ${finalPath} (${stats.size} bytes)`);
 
             let videoUrl = `/uploads/${finalFilename}`;
@@ -284,7 +286,8 @@ exports.completeUpload = async (req, res) => {
                 const zip = new AdmZip(finalPath);
                 const zipEntries = zip.getEntries();
                 const videoEntry = zipEntries.find(entry =>
-                    entry.entryName.toLowerCase().endsWith('.mp4')
+                    entry.entryName.toLowerCase().endsWith('.mp4') ||
+                    entry.entryName.toLowerCase().endsWith('.mov')
                 );
 
                 if (videoEntry) {
@@ -295,11 +298,14 @@ exports.completeUpload = async (req, res) => {
                     
                     const extractedStats = fs.statSync(path.join(uploadsDir, newFilename));
                     peso = extractedStats.size;
-                    extension = '.mp4';
+                    extension = path.extname(newFilename).toLowerCase();
+                    resolucion = await getVideoResolution(path.join(uploadsDir, newFilename));
                     
                     // Borrar el zip ensamblado
                     fs.unlinkSync(finalPath);
                 }
+            } else {
+                resolucion = await getVideoResolution(finalPath);
             }
 
             // Calcular el siguiente orden para la empresa
@@ -317,6 +323,7 @@ exports.completeUpload = async (req, res) => {
                 empresa_id: session.empresa_id,
                 peso: peso,
                 extension: extension,
+                resolucion: resolucion,
                 status: true,
                 orden: nextOrder
             });

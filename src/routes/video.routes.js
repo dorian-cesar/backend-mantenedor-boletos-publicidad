@@ -25,6 +25,15 @@ const roleMiddleware = require('../middlewares/role.middleware');
  *           type: string
  *         url:
  *           type: string
+ *         peso:
+ *           type: integer
+ *           description: Tamaño del video en bytes
+ *         extension:
+ *           type: string
+ *           description: Extensión del archivo (ej. .mp4)
+ *         resolucion:
+ *           type: string
+ *           description: Resolución del video en formato Ancho x Alto (ej. 1920x1080)
  *         empresa_id:
  *           type: integer
  *         status:
