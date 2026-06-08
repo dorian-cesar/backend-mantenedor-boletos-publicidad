@@ -2,7 +2,7 @@ const { Video, Empresa } = require('../models');
 const AdmZip = require('adm-zip');
 const path = require('path');
 const fs = require('fs');
-const { getVideoResolution } = require('../utils/videoMeta');
+const { getVideoMetadata } = require('../utils/videoMeta');
 
 exports.getAll = async (req, res) => {
     try {
@@ -38,6 +38,7 @@ exports.create = async (req, res) => {
         let extension = ext;
 
         let resolucion = null;
+        let duracion = null;
 
         // Lógica de descompresión si es un ZIP
         if (ext === '.zip') {
@@ -57,14 +58,18 @@ exports.create = async (req, res) => {
                 const stats = fs.statSync(finalPath);
                 peso = stats.size;
                 extension = path.extname(newFilename).toLowerCase();
-                resolucion = await getVideoResolution(finalPath);
+                const meta = await getVideoMetadata(finalPath);
+                resolucion = meta.resolution;
+                duracion = meta.duration;
 
                 // Opcional: borrar el zip original
                 fs.unlinkSync(req.file.path);
             }
         } else {
             // No es zip, extraer resolución directo del archivo subido
-            resolucion = await getVideoResolution(req.file.path);
+            const meta = await getVideoMetadata(req.file.path);
+            resolucion = meta.resolution;
+            duracion = meta.duration;
         }
 
         // Calcular el siguiente número de orden para esta empresa
@@ -82,6 +87,7 @@ exports.create = async (req, res) => {
             peso,
             extension,
             resolucion,
+            duracion,
             status: true,
             orden: nextOrder
         });
@@ -115,6 +121,7 @@ exports.update = async (req, res) => {
             let extension = ext;
 
             let resolucion = null;
+            let duracion = null;
 
             // Lógica de descompresión si es un ZIP
             if (ext === '.zip') {
@@ -134,12 +141,16 @@ exports.update = async (req, res) => {
                     const stats = fs.statSync(finalPath);
                     peso = stats.size;
                     extension = path.extname(newFilename).toLowerCase();
-                    resolucion = await getVideoResolution(finalPath);
+                    const meta = await getVideoMetadata(finalPath);
+                    resolucion = meta.resolution;
+                    duracion = meta.duration;
                     
                     fs.unlinkSync(req.file.path);
                 }
             } else {
-                resolucion = await getVideoResolution(req.file.path);
+                const meta = await getVideoMetadata(req.file.path);
+                resolucion = meta.resolution;
+                duracion = meta.duration;
             }
             
             // Opcional: borrar el archivo anterior si es diferente
@@ -150,6 +161,7 @@ exports.update = async (req, res) => {
             updateData.peso = peso;
             updateData.extension = extension;
             if (resolucion) updateData.resolucion = resolucion;
+            if (duracion) updateData.duracion = duracion;
         }
 
         await video.update(updateData);
@@ -233,6 +245,7 @@ exports.uploadChunk = async (req, res) => {
             let extension = path.extname(originalName).toLowerCase();
             
             let resolucion = null;
+            let duracion = null;
             
             const ext = path.extname(originalName).toLowerCase();
             if (ext === '.zip') {
@@ -251,12 +264,16 @@ exports.uploadChunk = async (req, res) => {
                     const extractedPath = path.join('uploads', newFilename);
                     peso = fs.statSync(extractedPath).size;
                     extension = path.extname(newFilename).toLowerCase();
-                    resolucion = await getVideoResolution(extractedPath);
+                    const meta = await getVideoMetadata(extractedPath);
+                    resolucion = meta.resolution;
+                    duracion = meta.duration;
                     
                     fs.unlinkSync(finalPath);
                 }
             } else {
-                resolucion = await getVideoResolution(finalPath);
+                const meta = await getVideoMetadata(finalPath);
+                resolucion = meta.resolution;
+                duracion = meta.duration;
             }
 
             const lastVideo = await Video.findOne({
@@ -273,6 +290,7 @@ exports.uploadChunk = async (req, res) => {
                 peso,
                 extension,
                 resolucion,
+                duracion,
                 status: true,
                 orden: nextOrder
             });

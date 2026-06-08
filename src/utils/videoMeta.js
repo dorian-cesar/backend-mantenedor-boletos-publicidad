@@ -3,18 +3,18 @@ const ffprobeStatic = require('ffprobe-static');
 
 // Configuramos fluent-ffmpeg para que use el binario estático incluido
 ffmpeg.setFfprobePath(ffprobeStatic.path);
+
 /**
- * Extrae la resolución de un archivo de video
+ * Extrae la metadata (resolución y duración) de un archivo de video
  * @param {string} filePath Ruta absoluta o relativa al archivo de video
- * @returns {Promise<string>} Resolución en formato "Ancho x Alto" (ej. "1920x1080"), o null si falla
+ * @returns {Promise<Object>} Objeto con resolution ("Ancho x Alto") y duration (segundos)
  */
-const getVideoResolution = (filePath) => {
+const getVideoMetadata = (filePath) => {
     return new Promise((resolve, reject) => {
         ffmpeg.ffprobe(filePath, (err, metadata) => {
             if (err) {
                 console.error('[VideoMeta] Error al extraer metadata con ffprobe:', err.message);
-                // No rechazamos para no bloquear la subida, simplemente devolvemos null
-                return resolve(null);
+                return resolve({ resolution: null, duration: null });
             }
 
             try {
@@ -23,14 +23,13 @@ const getVideoResolution = (filePath) => {
                 
                 if (!videoStream) {
                     console.warn('[VideoMeta] No se encontró un stream de video en el archivo.');
-                    return resolve(null);
+                    return resolve({ resolution: null, duration: null });
                 }
 
                 let width = videoStream.width;
                 let height = videoStream.height;
 
-                // Manejar rotación (común en videos grabados con celulares como iPhone .mov)
-                // Si la rotación es de 90 o 270 grados, el ancho y el alto están invertidos visualmente
+                // Manejar rotación
                 if (videoStream.tags && videoStream.tags.rotate) {
                     const rotation = parseInt(videoStream.tags.rotate, 10);
                     if (rotation === 90 || rotation === 270) {
@@ -38,7 +37,6 @@ const getVideoResolution = (filePath) => {
                         height = videoStream.width;
                     }
                 } else if (videoStream.side_data_list) {
-                    // ffmpeg más moderno guarda la rotación en side_data_list (displaymatrix)
                     const displayMatrix = videoStream.side_data_list.find(sd => sd.side_data_type === 'Display Matrix');
                     if (displayMatrix && displayMatrix.rotation) {
                         const rotation = Math.abs(parseInt(displayMatrix.rotation, 10));
@@ -49,19 +47,25 @@ const getVideoResolution = (filePath) => {
                     }
                 }
 
-                if (width && height) {
-                    resolve(`${width}x${height}`);
-                } else {
-                    resolve(null);
+                let resolution = (width && height) ? `${width}x${height}` : null;
+
+                // Extraer duración
+                let duration = null;
+                if (metadata.format && metadata.format.duration) {
+                    duration = Math.round(parseFloat(metadata.format.duration));
+                } else if (videoStream.duration) {
+                    duration = Math.round(parseFloat(videoStream.duration));
                 }
+
+                resolve({ resolution, duration });
             } catch (error) {
                 console.error('[VideoMeta] Error procesando metadata:', error.message);
-                resolve(null);
+                resolve({ resolution: null, duration: null });
             }
         });
     });
 };
 
 module.exports = {
-    getVideoResolution
+    getVideoMetadata
 };

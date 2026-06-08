@@ -4,7 +4,7 @@ const AdmZip = require('adm-zip');
 const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
-const { getVideoResolution } = require('../utils/videoMeta');
+const { getVideoMetadata } = require('../utils/videoMeta');
 
 const CHUNK_SIZE = parseInt(process.env.CHUNK_SIZE) || (2 * 1024 * 1024); // 2MB default
 const UPLOAD_EXPIRY_HOURS = parseInt(process.env.UPLOAD_EXPIRY_HOURS) || 24;
@@ -277,6 +277,7 @@ exports.completeUpload = async (req, res) => {
             let peso = stats.size;
             let extension = ext;
             let resolucion = null;
+            let duracion = null;
             console.log(`[VideoUpload] Archivo ensamblado: ${finalPath} (${stats.size} bytes)`);
 
             let videoUrl = `/uploads/${finalFilename}`;
@@ -299,13 +300,17 @@ exports.completeUpload = async (req, res) => {
                     const extractedStats = fs.statSync(path.join(uploadsDir, newFilename));
                     peso = extractedStats.size;
                     extension = path.extname(newFilename).toLowerCase();
-                    resolucion = await getVideoResolution(path.join(uploadsDir, newFilename));
+                    const meta = await getVideoMetadata(path.join(uploadsDir, newFilename));
+                    resolucion = meta.resolution;
+                    duracion = meta.duration;
                     
                     // Borrar el zip ensamblado
                     fs.unlinkSync(finalPath);
                 }
             } else {
-                resolucion = await getVideoResolution(finalPath);
+                const meta = await getVideoMetadata(finalPath);
+                resolucion = meta.resolution;
+                duracion = meta.duration;
             }
 
             // Calcular el siguiente orden para la empresa
@@ -324,6 +329,7 @@ exports.completeUpload = async (req, res) => {
                 peso: peso,
                 extension: extension,
                 resolucion: resolucion,
+                duracion: duracion,
                 status: true,
                 orden: nextOrder
             });

@@ -1,6 +1,6 @@
 require('dotenv').config({ path: __dirname + '/../../.env' });
 const { Video } = require('../models');
-const { getVideoResolution } = require('../utils/videoMeta');
+const { getVideoMetadata } = require('../utils/videoMeta');
 const fs = require('fs');
 const path = require('path');
 const sequelize = require('../config/database');
@@ -12,6 +12,10 @@ async function populateVideoMeta() {
         // Autenticar a la base de datos
         await sequelize.authenticate();
         console.log('Conexión a BD establecida.');
+
+        // Sincronizar para asegurar que la columna duracion exista
+        await sequelize.sync({ alter: true });
+        console.log('Modelos sincronizados.');
         
         // Obtener todos los videos
         const videos = await Video.findAll();
@@ -48,15 +52,22 @@ async function populateVideoMeta() {
                     console.log(`  - Extensión detectada: ${ext}`);
                 }
 
-                // 3. Validar y actualizar Resolución
-                if (!video.resolucion) {
-                    const resolucion = await getVideoResolution(absolutePath);
-                    if (resolucion) {
-                        updateData.resolucion = resolucion;
+                // 3. Validar y actualizar Resolución y Duración
+                if (!video.resolucion || !video.duracion) {
+                    const meta = await getVideoMetadata(absolutePath);
+                    if (meta.resolution && !video.resolucion) {
+                        updateData.resolucion = meta.resolution;
                         necesitaActualizacion = true;
-                        console.log(`  - Resolución extraída: ${resolucion}`);
-                    } else {
-                        console.log(`  [!] No se pudo extraer la resolución del archivo`);
+                        console.log(`  - Resolución extraída: ${meta.resolution}`);
+                    }
+                    if (meta.duration !== null && !video.duracion) {
+                        updateData.duracion = meta.duration;
+                        necesitaActualizacion = true;
+                        console.log(`  - Duración extraída: ${meta.duration}s`);
+                    }
+                    
+                    if (!meta.resolution && !meta.duration) {
+                        console.log(`  [!] No se pudo extraer la resolución ni duración del archivo`);
                     }
                 }
                 

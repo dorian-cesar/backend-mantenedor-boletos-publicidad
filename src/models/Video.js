@@ -32,6 +32,10 @@ const Video = sequelize.define('Video', {
         type: DataTypes.STRING,
         allowNull: true
     },
+    duracion: {
+        type: DataTypes.INTEGER,
+        allowNull: true
+    },
     empresa_id: {
         type: DataTypes.INTEGER,
         allowNull: false,
