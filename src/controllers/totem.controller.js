@@ -142,6 +142,16 @@ exports.getPlaylist = async (req, res) => {
 exports.create = async (req, res) => {
     try {
         const { id, identificador, direccion, latitud, longitud, block_screen_saver, video_ids } = req.body;
+
+        if (!id) {
+            return res.status(400).json({ message: 'El campo id es obligatorio' });
+        }
+
+        const existingTotem = await Totem.findByPk(id);
+        if (existingTotem) {
+            return res.status(400).json({ message: `Ya existe un tótem con el ID ${id}` });
+        }
+
         const totem = await Totem.create({ id, identificador, direccion, latitud, longitud, block_screen_saver });
 
         if (video_ids && video_ids.length > 0) {
