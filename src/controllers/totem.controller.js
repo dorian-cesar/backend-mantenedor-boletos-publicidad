@@ -141,8 +141,8 @@ exports.getPlaylist = async (req, res) => {
 
 exports.create = async (req, res) => {
     try {
-        const { identificador, direccion, latitud, longitud, block_screen_saver, video_ids } = req.body;
-        const totem = await Totem.create({ identificador, direccion, latitud, longitud, block_screen_saver });
+        const { id, identificador, direccion, latitud, longitud, block_screen_saver, video_ids } = req.body;
+        const totem = await Totem.create({ id, identificador, direccion, latitud, longitud, block_screen_saver });
 
         if (video_ids && video_ids.length > 0) {
             const videosToSet = await processVideoIds(video_ids);

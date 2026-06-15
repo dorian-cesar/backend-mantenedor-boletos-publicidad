@@ -4,8 +4,7 @@ const sequelize = require('../config/database');
 const Totem = sequelize.define('Totem', {
     id: {
         type: DataTypes.INTEGER,
-        primaryKey: true,
-        autoIncrement: true
+        primaryKey: true
     },
     identificador: {
         type: DataTypes.STRING,
