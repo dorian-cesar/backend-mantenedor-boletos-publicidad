@@ -42,6 +42,14 @@ const Totem = sequelize.define('Totem', {
     block_screen_saver: {
         type: DataTypes.BOOLEAN,
         defaultValue: false
+    },
+    ultima_telemetria: {
+        type: DataTypes.JSON,
+        allowNull: true
+    },
+    ultimo_error_critico: {
+        type: DataTypes.STRING,
+        allowNull: true
     }
 }, {
     tableName: 'totems',

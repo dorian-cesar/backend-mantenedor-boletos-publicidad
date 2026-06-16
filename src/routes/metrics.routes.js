@@ -26,7 +26,14 @@ const simpleApiKeyAuth = async (req, res, next) => {
     }
 };
 
-// Endpoint: POST /api/v1/totems/metrics (el prefijo se configura en el index.js de rutas)
+// Endpoint para recibir métricas (POST /api/v1/totems/metrics)
 router.post('/', simpleApiKeyAuth, metricsController.receiveMetrics);
+
+// Endpoint para que el Mantenedor consulte las métricas (GET /api/v1/totems/metrics)
+// Asumimos que los admins tendrán un token JWT válido que pasará el authMiddleware global
+const authMiddleware = require('../middlewares/auth.middleware');
+const roleMiddleware = require('../middlewares/role.middleware');
+
+router.get('/', [authMiddleware, roleMiddleware(['ADMIN'])], metricsController.getAllMetrics);
 
 module.exports = router;
