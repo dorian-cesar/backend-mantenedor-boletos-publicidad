@@ -9,8 +9,10 @@ const authRoutes = require('./auth.routes');
 const apiKeyRoutes = require('./apiKey.routes');
 const ventaBoletoRoutes = require('./ventaBoleto.routes');
 const interaccionTotemRoutes = require('./interaccionTotem.routes');
+const metricsRoutes = require('./metrics.routes');
 
 // IMPORTANTE: /videos/upload debe ir ANTES de /videos para que Express matchee correctamente
+router.use('/v1/totems/metrics', metricsRoutes);
 router.use('/videos/upload', videoUploadRoutes);
 router.use('/videos', videoRoutes);
 router.use('/empresas', empresaRoutes);
