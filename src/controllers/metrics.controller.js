@@ -7,24 +7,38 @@ exports.receiveMetrics = (req, res) => {
         try {
             const payload = req.body;
             const { Totem } = require('../models');
+            const { Op } = require('sequelize');
 
-            // Buscamos el Tótem para actualizarlo (si totem_id no viene en el body pero estamos 
-            // usando el apiKeyAuth global, estaría en req.user.id. Asumiremos payload.totem_id o req.user.id)
-            const totemIdToUpdate = payload.totem_id || (req.user ? req.user.id : null);
+            // 1. Priorizamos el ID extraído de forma segura desde la base de datos (vía API Key)
+            // 2. Si es una key global (PLATAFORMA), confiamos en el totem_id (puede ser el string 'T-001' o el entero 1) que viene en el payload.
+            const rawTotemId = (req.user && req.user.id) ? req.user.id : payload.totem_id;
+
+            if (!rawTotemId) {
+                console.error('[Metrics] Error: No se pudo identificar a qué tótem pertenece la métrica.');
+                return;
+            }
+
+            // Construimos una condición flexible para buscar por ID (entero) o por Identificador (string)
+            const whereCondition = {
+                [Op.or]: [
+                    { identificador: String(rawTotemId) }
+                ]
+            };
+            if (!isNaN(parseInt(rawTotemId))) {
+                whereCondition[Op.or].push({ id: parseInt(rawTotemId) });
+            }
 
             // Manejo especial cuando el monitor local falla
             if (payload.error_critico) {
-                console.error(`[ALERTA CRÍTICA] Tótem ${totemIdToUpdate || 'Desconocido'} reportó falla del monitor local:`, payload.error_critico);
-                if (totemIdToUpdate) {
-                    await Totem.update(
-                        { 
-                            ultimo_error_critico: payload.error_critico,
-                            is_online: true,
-                            last_ping: new Date()
-                        },
-                        { where: { id: totemIdToUpdate } }
-                    );
-                }
+                console.error(`[ALERTA CRÍTICA] Tótem ${rawTotemId} reportó falla del monitor local:`, payload.error_critico);
+                await Totem.update(
+                    { 
+                        ultimo_error_critico: payload.error_critico,
+                        is_online: true,
+                        last_ping: new Date()
+                    },
+                    { where: whereCondition }
+                );
                 return;
             }
 
@@ -35,17 +49,15 @@ exports.receiveMetrics = (req, res) => {
             }
 
             // Actualizamos la telemetría en la base de datos
-            if (totemIdToUpdate) {
-                await Totem.update(
-                    { 
-                        ultima_telemetria: payload,
-                        ultimo_error_critico: null, // Limpiamos errores anteriores si ahora responde bien
-                        is_online: true,
-                        last_ping: new Date()
-                    },
-                    { where: { id: totemIdToUpdate } }
-                );
-            }
+            await Totem.update(
+                { 
+                    ultima_telemetria: payload,
+                    ultimo_error_critico: null, // Limpiamos errores anteriores si ahora responde bien
+                    is_online: true,
+                    last_ping: new Date()
+                },
+                { where: whereCondition }
+            );
 
             const { totem_id, hardware, perifericos, servicios_locales } = payload;
 

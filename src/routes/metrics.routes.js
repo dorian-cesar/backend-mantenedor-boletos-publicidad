@@ -20,6 +20,13 @@ const simpleApiKeyAuth = async (req, res, next) => {
         if (!keyFound) {
             return res.status(401).json({ message: 'Unauthorized: Invalid API Key' });
         }
+
+        // Adjuntar contexto de seguridad al request
+        req.user = {
+            id: keyFound.totem_id || null,
+            tipo: keyFound.tipo
+        };
+
         next();
     } catch (error) {
         return res.status(500).json({ message: 'Internal Server Error validating API Key' });
