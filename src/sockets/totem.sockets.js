@@ -57,11 +57,17 @@ function initTotemSockets(io) {
                     { is_online: true, last_ping: new Date() },
                     { where: { id: rawTotemId } }
                 );
+                // Retransmitir a los administradores
+                io.to('room:admins').emit('admin:totem_online', { totemId: rawTotemId });
             } catch (error) {
                 console.error(`[Sockets] Error marcando tótem ${rawTotemId} como online:`, error);
             }
         } else {
-            console.log(`[Sockets] Cliente PLATAFORMA conectado (Socket ID: ${socket.id})`);
+            console.log(`[Sockets] Cliente ${socket.user.tipo || 'PLATAFORMA'} conectado (Socket ID: ${socket.id})`);
+            if (socket.user.tipo === 'ADMIN') {
+                socket.join('room:admins');
+                console.log(`[Sockets] ADMIN unido a la sala room:admins`);
+            }
         }
 
         // Manejar desconexión
@@ -73,6 +79,7 @@ function initTotemSockets(io) {
                         { is_online: false, last_ping: new Date() },
                         { where: { id: rawTotemId } }
                     );
+                    io.to('room:admins').emit('admin:totem_offline', { totemId: rawTotemId });
                 } catch (error) {
                     console.error(`[Sockets] Error marcando tótem ${rawTotemId} como offline:`, error);
                 }
@@ -108,6 +115,12 @@ function initTotemSockets(io) {
                         },
                         { where: whereCondition }
                     );
+                    
+                    io.to('room:admins').emit('admin:metrics_updated', {
+                        totemId: effectiveTotemId,
+                        metrics: payload
+                    });
+                    
                     return;
                 }
 
@@ -126,6 +139,12 @@ function initTotemSockets(io) {
                     },
                     { where: whereCondition }
                 );
+
+                // Retransmitir al Panel Mantenedor en vivo
+                io.to('room:admins').emit('admin:metrics_updated', {
+                    totemId: effectiveTotemId,
+                    metrics: payload
+                });
 
                 const { hardware, perifericos, servicios_locales } = payload;
 
