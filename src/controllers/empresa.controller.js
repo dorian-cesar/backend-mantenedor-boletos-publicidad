@@ -23,6 +23,13 @@ exports.create = async (req, res) => {
     try {
         const empresa = await Empresa.create(req.body);
         res.status(201).json(empresa);
+
+        // WS Push
+        const io = req.app.get('io');
+        if (io) {
+            const allEmpresas = await Empresa.findAll();
+            io.to('room:admins').emit('admin:empresas_updated', allEmpresas);
+        }
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -34,6 +41,13 @@ exports.update = async (req, res) => {
         if (!empresa) return res.status(404).json({ message: 'Empresa no encontrada' });
         await empresa.update(req.body);
         res.json(empresa);
+
+        // WS Push
+        const io = req.app.get('io');
+        if (io) {
+            const allEmpresas = await Empresa.findAll();
+            io.to('room:admins').emit('admin:empresas_updated', allEmpresas);
+        }
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -45,6 +59,13 @@ exports.delete = async (req, res) => {
         if (!empresa) return res.status(404).json({ message: 'Empresa no encontrada' });
         await empresa.destroy(); // Soft delete
         res.json({ message: 'Empresa eliminada (soft delete)' });
+
+        // WS Push
+        const io = req.app.get('io');
+        if (io) {
+            const allEmpresas = await Empresa.findAll();
+            io.to('room:admins').emit('admin:empresas_updated', allEmpresas);
+        }
     } catch (error) {
         res.status(500).json({ message: error.message });
     }

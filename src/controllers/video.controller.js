@@ -93,6 +93,13 @@ exports.create = async (req, res) => {
         });
 
         res.status(201).json(video);
+
+        // WS Push
+        const io = req.app.get('io');
+        if (io) {
+            const allVideos = await Video.findAll({ order: [['orden', 'ASC'], ['createdAt', 'DESC']] });
+            io.to('room:admins').emit('admin:videos_updated', allVideos);
+        }
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -166,6 +173,13 @@ exports.update = async (req, res) => {
 
         await video.update(updateData);
         res.json(video);
+
+        // WS Push
+        const io = req.app.get('io');
+        if (io) {
+            const allVideos = await Video.findAll({ order: [['orden', 'ASC'], ['createdAt', 'DESC']] });
+            io.to('room:admins').emit('admin:videos_updated', allVideos);
+        }
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -177,6 +191,13 @@ exports.delete = async (req, res) => {
         if (!video) return res.status(404).json({ message: 'Video no encontrado' });
         await video.destroy();
         res.json({ message: 'Video eliminado (soft delete)' });
+
+        // WS Push
+        const io = req.app.get('io');
+        if (io) {
+            const allVideos = await Video.findAll({ order: [['orden', 'ASC'], ['createdAt', 'DESC']] });
+            io.to('room:admins').emit('admin:videos_updated', allVideos);
+        }
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -197,6 +218,13 @@ exports.bulkUpdateOrder = async (req, res) => {
         await Promise.all(promises);
 
         res.json({ message: 'Orden actualizado correctamente' });
+
+        // WS Push
+        const io = req.app.get('io');
+        if (io) {
+            const allVideos = await Video.findAll({ order: [['orden', 'ASC'], ['createdAt', 'DESC']] });
+            io.to('room:admins').emit('admin:videos_updated', allVideos);
+        }
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -295,7 +323,15 @@ exports.uploadChunk = async (req, res) => {
                 orden: nextOrder
             });
 
-            return res.status(201).json(video);
+            res.status(201).json(video);
+
+            // WS Push
+            const io = req.app.get('io');
+            if (io) {
+                const allVideos = await Video.findAll({ order: [['orden', 'ASC'], ['createdAt', 'DESC']] });
+                io.to('room:admins').emit('admin:videos_updated', allVideos);
+            }
+            return;
         }
 
         res.json({ message: 'Chunk recibido', chunkIndex });

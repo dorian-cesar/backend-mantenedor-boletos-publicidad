@@ -49,6 +49,7 @@ async function startServer() {
                 methods: ['GET', 'POST']
             }
         });
+        app.set('io', io);
 
         // Inicializar lógica de sockets para tótems
         initTotemSockets(io);
