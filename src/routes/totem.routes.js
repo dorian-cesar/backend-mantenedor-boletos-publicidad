@@ -136,7 +136,7 @@ router.post('/:id/logout', [authMiddleware, roleMiddleware(['ADMIN'])], totemCon
  * @swagger
  * /api/totems/ping:
  *   post:
- *     summary: Actualiza el estado del totem (latido/heartbeat) para mantenerlo online
+ *     summary: [DEPRECADO - Migrado a WebSockets] Actualiza el estado del totem (latido/heartbeat) para mantenerlo online
  *     tags: [Totems]
  *     security:
  *       - bearerAuth: []
@@ -146,7 +146,8 @@ router.post('/:id/logout', [authMiddleware, roleMiddleware(['ADMIN'])], totemCon
  *       401:
  *         description: No autenticado o token inválido
  */
-router.post('/ping', authMiddleware, totemController.pingTotem);
+// [Migrado a WebSockets] Comentado como respaldo
+// router.post('/ping', authMiddleware, totemController.pingTotem);
 
 /**
  * @swagger

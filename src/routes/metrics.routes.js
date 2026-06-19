@@ -34,7 +34,8 @@ const simpleApiKeyAuth = async (req, res, next) => {
 };
 
 // Endpoint para recibir métricas (POST /api/v1/totems/metrics)
-router.post('/', simpleApiKeyAuth, metricsController.receiveMetrics);
+// [Migrado a WebSockets] Comentado como respaldo por si falla la implementación WS
+// router.post('/', simpleApiKeyAuth, metricsController.receiveMetrics);
 
 // Endpoint para que el Mantenedor consulte las métricas (GET /api/v1/totems/metrics)
 // Asumimos que los admins tendrán un token JWT válido que pasará el authMiddleware global

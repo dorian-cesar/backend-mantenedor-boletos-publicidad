@@ -32,12 +32,29 @@ async function startServer() {
         // Iniciar limpieza periódica de uploads expirados
         startUploadCleaner();
 
-        // Iniciar monitor de tótems (latidos)
+        // Iniciar monitor de tótems (latidos) (mantener como respaldo)
         const { startTotemMonitor } = require('./utils/totemMonitor');
         startTotemMonitor();
 
-        app.listen(process.env.PORT || 3000, () => {
-            console.log(`Servidor corriendo en el puerto ${process.env.PORT || 3000}`);
+        // Configurar servidor HTTP y WebSockets
+        const http = require('http');
+        const { Server } = require('socket.io');
+        const { initTotemSockets } = require('./sockets/totem.sockets');
+
+        const server = http.createServer(app);
+        
+        const io = new Server(server, {
+            cors: {
+                origin: '*',
+                methods: ['GET', 'POST']
+            }
+        });
+
+        // Inicializar lógica de sockets para tótems
+        initTotemSockets(io);
+
+        server.listen(process.env.PORT || 3000, () => {
+            console.log(`Servidor HTTP y WebSocket corriendo en el puerto ${process.env.PORT || 3000}`);
         });
     } catch (error) {
         console.error('No se pudo conectar a la base de datos:', error);
@@ -45,8 +62,4 @@ async function startServer() {
 }
 
 // Iniciar el servidor
-startServer().then(() => {
-    // El servidor ya está escuchando dentro de startServer
-    // Mantenemos el proceso vivo explícitamente si es necesario (aunque app.listen debería bastar)
-    setInterval(() => {}, 1000000); 
-});
+startServer().catch(err => console.error(err));
