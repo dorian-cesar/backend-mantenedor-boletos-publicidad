@@ -42,6 +42,6 @@ const simpleApiKeyAuth = async (req, res, next) => {
 const authMiddleware = require('../middlewares/auth.middleware');
 const roleMiddleware = require('../middlewares/role.middleware');
 
-router.get('/', [authMiddleware, roleMiddleware(['ADMIN'])], metricsController.getAllMetrics);
+// router.get('/', [authMiddleware, roleMiddleware(['ADMIN'])], metricsController.getAllMetrics);
 
 module.exports = router;

@@ -67,6 +67,16 @@ function initTotemSockets(io) {
             if (socket.user.tipo === 'ADMIN') {
                 socket.join('room:admins');
                 console.log(`[Sockets] ADMIN unido a la sala room:admins`);
+                
+                // Enviar la lista inicial de todos los tótems al administrador recién conectado
+                try {
+                    const totems = await Totem.findAll({
+                        attributes: ['id', 'identificador', 'direccion', 'status', 'is_online', 'last_ping', 'ultima_telemetria', 'ultimo_error_critico']
+                    });
+                    socket.emit('admin:initial_metrics', totems);
+                } catch (error) {
+                    console.error('[Sockets] Error obteniendo métricas iniciales para ADMIN:', error);
+                }
             }
         }
 
