@@ -167,6 +167,13 @@ exports.create = async (req, res) => {
             await totem.setVideos(videosToSet);
         }
 
+        const { getIO } = require('../sockets/totem.sockets');
+        const io = getIO();
+        if (io) {
+            io.to('room:admins').emit('admin:totems_updated');
+            io.to(`room:totem:${totem.id}`).emit('totem:updated');
+        }
+
         res.status(201).json(totem);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -193,6 +200,13 @@ exports.update = async (req, res) => {
             await totem.setVideos(videosToSet);
         }
 
+        const { getIO } = require('../sockets/totem.sockets');
+        const io = getIO();
+        if (io) {
+            io.to('room:admins').emit('admin:totems_updated');
+            io.to(`room:totem:${totem.id}`).emit('totem:updated');
+        }
+
         res.json(totem);
     } catch (error) {
         res.status(400).json({ message: error.message });
@@ -210,6 +224,13 @@ exports.patch = async (req, res) => {
         if (req.body.video_ids) {
             const videosToSet = await processVideoIds(req.body.video_ids);
             await totem.setVideos(videosToSet);
+        }
+
+        const { getIO } = require('../sockets/totem.sockets');
+        const io = getIO();
+        if (io) {
+            io.to('room:admins').emit('admin:totems_updated');
+            io.to(`room:totem:${totem.id}`).emit('totem:updated');
         }
 
         res.json(totem);
@@ -244,6 +265,14 @@ exports.delete = async (req, res) => {
         const totem = await Totem.findByPk(req.params.id);
         if (!totem) return res.status(404).json({ message: 'Totem no encontrado' });
         await totem.destroy();
+
+        const { getIO } = require('../sockets/totem.sockets');
+        const io = getIO();
+        if (io) {
+            io.to('room:admins').emit('admin:totems_updated');
+            io.to(`room:totem:${totem.id}`).emit('totem:updated');
+        }
+
         res.json({ message: 'Totem eliminado (soft delete)' });
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -285,6 +314,13 @@ exports.addVideos = async (req, res) => {
             }
         }
 
+        const { getIO } = require('../sockets/totem.sockets');
+        const io = getIO();
+        if (io) {
+            io.to('room:admins').emit('admin:totems_updated');
+            io.to(`room:totem:${id}`).emit('totem:updated');
+        }
+
         res.status(201).json({
             message: `${results.length} videos agregados correctamente`,
             added: results
@@ -307,6 +343,13 @@ exports.removeVideo = async (req, res) => {
 
         if (deleted === 0) {
             return res.status(404).json({ message: 'Asociación no encontrada' });
+        }
+
+        const { getIO } = require('../sockets/totem.sockets');
+        const io = getIO();
+        if (io) {
+            io.to('room:admins').emit('admin:totems_updated');
+            io.to(`room:totem:${id}`).emit('totem:updated');
         }
 
         res.json({ message: 'Video removido del tótem correctamente' });

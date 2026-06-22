@@ -35,6 +35,11 @@ exports.registrarVenta = async (req, res) => {
             provider,
             timestamp_operacion
         });
+        const { getIO } = require('../sockets/totem.sockets');
+        const io = getIO();
+        if (io) {
+            io.to('room:admins').emit('admin:ventas_updated');
+        }
 
         res.status(201).json({
             message: 'Venta registrada exitosamente',

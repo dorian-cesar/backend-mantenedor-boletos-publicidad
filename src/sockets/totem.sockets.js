@@ -51,6 +51,9 @@ function initTotemSockets(io) {
         if (rawTotemId) {
             console.log(`[Sockets] Tótem ID ${rawTotemId} conectado (Socket ID: ${socket.id})`);
             
+            // Unir a sala específica de este tótem para recibir notificaciones dirigidas
+            socket.join(`room:totem:${rawTotemId}`);
+            
             // Marcar como online apenas se conecta
             try {
                 await Totem.update(

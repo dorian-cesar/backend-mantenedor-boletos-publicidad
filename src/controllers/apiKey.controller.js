@@ -3,6 +3,7 @@ const crypto = require('crypto');
 
 exports.create = async (req, res) => {
     try {
+        const { getIO } = require('../sockets/totem.sockets');
         const { description, tipo, totem_id } = req.body;
         
         // Si es tipo TOTEM, validamos que venga el totem_id
@@ -35,6 +36,14 @@ exports.create = async (req, res) => {
             totem_id: tipo === 'TOTEM' ? totem_id : null
         });
 
+        const io = getIO();
+        if (io) {
+            const allKeys = await ApiKey.findAll({
+                include: [{ model: Totem, as: 'totem', attributes: ['id', 'identificador', 'direccion'] }]
+            });
+            io.to('room:admins').emit('admin:apikeys_updated', allKeys);
+        }
+
         res.status(201).json(apiKey);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -54,6 +63,7 @@ exports.getAll = async (req, res) => {
 
 exports.update = async (req, res) => {
     try {
+        const { getIO } = require('../sockets/totem.sockets');
         const { id } = req.params;
         const { description, status, tipo, totem_id } = req.body;
         const apiKey = await ApiKey.findByPk(id);
@@ -87,6 +97,14 @@ exports.update = async (req, res) => {
 
         await apiKey.update(updateData);
 
+        const io = getIO();
+        if (io) {
+            const allKeys = await ApiKey.findAll({
+                include: [{ model: Totem, as: 'totem', attributes: ['id', 'identificador', 'direccion'] }]
+            });
+            io.to('room:admins').emit('admin:apikeys_updated', allKeys);
+        }
+
         res.json(apiKey);
     } catch (error) {
         res.status(500).json({ message: error.message });
@@ -95,6 +113,7 @@ exports.update = async (req, res) => {
 
 exports.delete = async (req, res) => {
     try {
+        const { getIO } = require('../sockets/totem.sockets');
         const { id } = req.params;
         const apiKey = await ApiKey.findByPk(id);
         
@@ -103,6 +122,15 @@ exports.delete = async (req, res) => {
         }
 
         await apiKey.destroy();
+
+        const io = getIO();
+        if (io) {
+            const allKeys = await ApiKey.findAll({
+                include: [{ model: Totem, as: 'totem', attributes: ['id', 'identificador', 'direccion'] }]
+            });
+            io.to('room:admins').emit('admin:apikeys_updated', allKeys);
+        }
+
         res.json({ message: 'API Key eliminada correctamente' });
     } catch (error) {
         res.status(500).json({ message: error.message });

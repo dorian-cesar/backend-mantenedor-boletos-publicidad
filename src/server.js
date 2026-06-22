@@ -42,6 +42,12 @@ async function startServer() {
         const { initTotemSockets } = require('./sockets/totem.sockets');
 
         const server = http.createServer(app);
+
+        // DEBUG: Imprimir los headers del upgrade de WebSocket que llegan al servidor Node.js
+        server.on('upgrade', (req, socket, head) => {
+            console.log('[DEBUG-UPGRADE] method:', req.method, 'url:', req.url);
+            console.log('[DEBUG-UPGRADE] headers:', req.headers);
+        });
         
         const io = new Server(server, {
             cors: {
