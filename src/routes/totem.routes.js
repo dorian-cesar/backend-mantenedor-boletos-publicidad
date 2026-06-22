@@ -136,7 +136,7 @@ router.post('/:id/logout', [authMiddleware, roleMiddleware(['ADMIN'])], totemCon
  * @swagger
  * /api/totems/ping:
  *   post:
- *     summary: [DEPRECADO - Migrado a WebSockets] Actualiza el estado del totem (latido/heartbeat) para mantenerlo online
+ *     summary: "[DEPRECADO - Migrado a WebSockets] Actualiza el estado del totem (latido/heartbeat) para mantenerlo online"
  *     tags: [Totems]
  *     security:
  *       - bearerAuth: []
