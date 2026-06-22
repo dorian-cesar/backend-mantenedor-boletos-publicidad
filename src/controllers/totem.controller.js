@@ -117,14 +117,20 @@ exports.getPlaylist = async (req, res) => {
             order: [[ { model: Video, as: 'videos' }, TotemVideo, 'orden', 'ASC']]
         });
         
-        if (!totem) return res.status(404).json({ message: 'Totem no encontrado' });
+        // Si el tótem no existe, devolvemos un arreglo vacío como JSON válido
+        if (!totem) {
+            return res.status(200).json({ playlist: [] });
+        }
+        
+        // Aseguramos que videos sea un arreglo, incluso si falla la relación
+        const videos = totem.videos || [];
         
         // Retornamos solo la lista de videos formateada
-        const playlist = totem.videos.map(v => ({
+        const playlist = videos.map(v => ({
             id: v.id,
             nombre: v.nombre,
             url: v.url,
-            orden: v.TotemVideo.orden
+            orden: v.TotemVideo ? v.TotemVideo.orden : 0
         }));
 
         res.json({
@@ -135,7 +141,9 @@ exports.getPlaylist = async (req, res) => {
             playlist
         });
     } catch (error) {
-        res.status(500).json({ message: error.message });
+        console.error("Error en getPlaylist:", error);
+        // Devolvemos 200 con playlist vacía para que el frontend no colapse
+        res.status(200).json({ playlist: [] });
     }
 };
 
