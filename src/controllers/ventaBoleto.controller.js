@@ -56,7 +56,12 @@ exports.getAuditoria = async (req, res) => {
         const where = {};
 
         if (totem_id) {
-            where.totem_id = totem_id;
+            const ids = totem_id.split(',').map(id => id.trim()).filter(Boolean);
+            if (ids.length > 1) {
+                where.totem_id = { [Op.in]: ids };
+            } else if (ids.length === 1) {
+                where.totem_id = ids[0];
+            }
         }
 
         if (fecha_inicio && fecha_fin) {
