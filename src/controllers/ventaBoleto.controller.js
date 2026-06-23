@@ -61,15 +61,15 @@ exports.getAuditoria = async (req, res) => {
 
         if (fecha_inicio && fecha_fin) {
             where.timestamp_operacion = {
-                [Op.between]: [new Date(fecha_inicio), new Date(fecha_fin)]
+                [Op.between]: [fecha_inicio, fecha_fin]
             };
         } else if (fecha_inicio) {
             where.timestamp_operacion = {
-                [Op.gte]: new Date(fecha_inicio)
+                [Op.gte]: fecha_inicio
             };
         } else if (fecha_fin) {
             where.timestamp_operacion = {
-                [Op.lte]: new Date(fecha_fin)
+                [Op.lte]: fecha_fin
             };
         }
 
