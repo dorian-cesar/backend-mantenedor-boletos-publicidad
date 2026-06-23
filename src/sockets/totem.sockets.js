@@ -178,6 +178,17 @@ function initTotemSockets(io) {
                 console.error('[Sockets] Error procesando telemetría:', error.message);
             }
         });
+
+        // Evento desde ADMIN para mandar un comando a un tótem específico
+        socket.on('admin:command_totem', async (payload) => {
+            if (socket.user.tipo !== 'ADMIN') return;
+            const { totemId, command } = payload;
+            
+            if (totemId && command === 'refresh') {
+                console.log(`[Sockets] ADMIN ejecutando REFRESH en Tótem ${totemId}`);
+                io.to(`room:totem:${totemId}`).emit('totem:execute_command', { action: 'refresh' });
+            }
+        });
     });
 }
 
