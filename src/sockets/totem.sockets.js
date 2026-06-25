@@ -1,7 +1,10 @@
 const { Totem, ApiKey } = require('../models');
 const { Op } = require('sequelize');
 
+let ioInstance;
+
 function initTotemSockets(io) {
+    ioInstance = io;
     // Middleware de autenticación para WebSockets
     io.use(async (socket, next) => {
         try {
@@ -192,4 +195,11 @@ function initTotemSockets(io) {
     });
 }
 
-module.exports = { initTotemSockets };
+function getIO() {
+    if (!ioInstance) {
+        console.warn('[Sockets] Advertencia: getIO() fue llamado antes de initTotemSockets()');
+    }
+    return ioInstance;
+}
+
+module.exports = { initTotemSockets, getIO };
