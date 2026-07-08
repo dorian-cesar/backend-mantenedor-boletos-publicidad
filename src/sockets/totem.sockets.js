@@ -91,11 +91,18 @@ function initTotemSockets(io) {
             console.log(`[Sockets] Cliente desconectado (Socket ID: ${socket.id})`);
             if (rawTotemId) {
                 try {
-                    await Totem.update(
-                        { is_online: false, last_ping: new Date() },
-                        { where: { id: rawTotemId } }
-                    );
-                    io.to('room:admins').emit('admin:totem_offline', { totemId: rawTotemId });
+                    // Verificar si quedan otras pestañas o sockets conectados para este mismo tótem
+                    const room = io.sockets.adapter.rooms.get(`room:totem:${rawTotemId}`);
+                    if (!room || room.size === 0) {
+                        await Totem.update(
+                            { is_online: false, last_ping: new Date() },
+                            { where: { id: rawTotemId } }
+                        );
+                        io.to('room:admins').emit('admin:totem_offline', { totemId: rawTotemId });
+                        console.log(`[Sockets] Tótem ID ${rawTotemId} marcado como OFFLINE.`);
+                    } else {
+                        console.log(`[Sockets] Tótem ID ${rawTotemId} perdió una conexión, pero aún tiene ${room.size} activa(s). Se mantiene ONLINE.`);
+                    }
                 } catch (error) {
                     console.error(`[Sockets] Error marcando tótem ${rawTotemId} como offline:`, error);
                 }
