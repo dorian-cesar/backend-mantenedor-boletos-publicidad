@@ -5,6 +5,11 @@ const path = require('path');
 const fs = require('fs');
 const { v4: uuidv4 } = require('uuid');
 const { getVideoMetadata } = require('../utils/videoMeta');
+const ffmpeg = require('fluent-ffmpeg');
+const ffmpegStatic = require('ffmpeg-static');
+
+// Configurar FFmpeg con el binario estático
+ffmpeg.setFfmpegPath(ffmpegStatic);
 
 const CHUNK_SIZE = parseInt(process.env.CHUNK_SIZE) || (2 * 1024 * 1024); // 2MB default
 const UPLOAD_EXPIRY_HOURS = parseInt(process.env.UPLOAD_EXPIRY_HOURS) || 24;
@@ -274,15 +279,12 @@ exports.completeUpload = async (req, res) => {
 
             // Verificar tamaño del archivo final
             const stats = fs.statSync(finalPath);
-            let peso = stats.size;
-            let extension = ext;
-            let resolucion = null;
-            let duracion = null;
             console.log(`[VideoUpload] Archivo ensamblado: ${finalPath} (${stats.size} bytes)`);
 
-            let videoUrl = `/uploads/${finalFilename}`;
+            let sourceVideoPath = finalPath;
+            let originalZipPath = null;
 
-            // Lógica de descompresión si es ZIP (misma que video.controller.js)
+            // Lógica de descompresión si es ZIP
             if (ext === '.zip') {
                 const zip = new AdmZip(finalPath);
                 const zipEntries = zip.getEntries();
@@ -295,23 +297,61 @@ exports.completeUpload = async (req, res) => {
                     const newFilename = `${Date.now()}-${videoEntry.entryName}`;
                     const uploadsDir = path.join(__dirname, '../../uploads');
                     zip.extractEntryTo(videoEntry, uploadsDir, false, true, false, newFilename);
-                    videoUrl = `/uploads/${newFilename}`;
-                    
-                    const extractedStats = fs.statSync(path.join(uploadsDir, newFilename));
-                    peso = extractedStats.size;
-                    extension = path.extname(newFilename).toLowerCase();
-                    const meta = await getVideoMetadata(path.join(uploadsDir, newFilename));
-                    resolucion = meta.resolution;
-                    duracion = meta.duration;
-                    
-                    // Borrar el zip ensamblado
-                    fs.unlinkSync(finalPath);
+                    sourceVideoPath = path.join(uploadsDir, newFilename);
+                    originalZipPath = finalPath;
+                } else {
+                    throw new Error("No se encontró video válido en el archivo ZIP");
                 }
-            } else {
-                const meta = await getVideoMetadata(finalPath);
-                resolucion = meta.resolution;
-                duracion = meta.duration;
             }
+
+            // -------------------------------------------------------------
+            // TRANSCODIFICACIÓN Y OPTIMIZACIÓN (FFMPEG)
+            // -------------------------------------------------------------
+            const transcodedFilename = `opt-${uuidv4()}.mp4`;
+            const transcodedPath = path.join(__dirname, '../../uploads', transcodedFilename);
+            console.log(`[VideoUpload] Iniciando transcodificación para ${sourceVideoPath}...`);
+
+            await new Promise((resolve, reject) => {
+                ffmpeg(sourceVideoPath)
+                    .videoCodec('libx264')
+                    .audioCodec('aac')
+                    // -vf scale=-2:'min(1080,ih)' -> Máximo 1080p en alto, auto en ancho conservando aspect ratio, -2 asegura que sea divisible por 2
+                    .outputOptions([
+                        '-vf scale=-2:\'min(1080,ih)\'',
+                        '-b:v 3000k',
+                        '-maxrate 3000k',
+                        '-bufsize 6000k',
+                        '-r 30',
+                        '-preset fast'
+                    ])
+                    .on('end', () => {
+                        console.log(`[VideoUpload] Transcodificación completada: ${transcodedPath}`);
+                        resolve();
+                    })
+                    .on('error', (err) => {
+                        console.error(`[VideoUpload] Error en FFmpeg:`, err);
+                        reject(err);
+                    })
+                    .save(transcodedPath);
+            });
+
+            // Limpieza de archivos temporales (original ensamblado o extraído del ZIP)
+            if (fs.existsSync(sourceVideoPath)) {
+                fs.unlinkSync(sourceVideoPath);
+            }
+            if (originalZipPath && fs.existsSync(originalZipPath)) {
+                fs.unlinkSync(originalZipPath);
+            }
+
+            // Metadatos finales del video procesado
+            const videoUrl = `/uploads/${transcodedFilename}`;
+            const transcodedStats = fs.statSync(transcodedPath);
+            const peso = transcodedStats.size;
+            const extension = '.mp4';
+            const meta = await getVideoMetadata(transcodedPath);
+            const resolucion = meta.resolution;
+            const duracion = meta.duration;
+
 
             // Calcular el siguiente orden para la empresa
             const lastVideo = await Video.findOne({
