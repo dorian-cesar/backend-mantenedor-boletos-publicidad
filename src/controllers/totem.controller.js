@@ -137,6 +137,7 @@ exports.getPlaylist = async (req, res) => {
             totem_id: totem.id,
             identificador: totem.identificador,
             block_screen_saver: totem.block_screen_saver,
+            modo_prueba: totem.modo_prueba,
             total_videos: playlist.length,
             playlist
         });
@@ -149,7 +150,7 @@ exports.getPlaylist = async (req, res) => {
 
 exports.create = async (req, res) => {
     try {
-        const { id, identificador, direccion, latitud, longitud, block_screen_saver, video_ids } = req.body;
+        const { id, identificador, direccion, latitud, longitud, block_screen_saver, modo_prueba, video_ids } = req.body;
 
         if (!id) {
             return res.status(400).json({ message: 'El campo id es obligatorio' });
@@ -160,7 +161,7 @@ exports.create = async (req, res) => {
             return res.status(400).json({ message: `Ya existe un tótem con el ID ${id}` });
         }
 
-        const totem = await Totem.create({ id, identificador, direccion, latitud, longitud, block_screen_saver });
+        const totem = await Totem.create({ id, identificador, direccion, latitud, longitud, block_screen_saver, modo_prueba });
 
         if (video_ids && video_ids.length > 0) {
             const videosToSet = await processVideoIds(video_ids);
@@ -182,7 +183,7 @@ exports.create = async (req, res) => {
 
 exports.update = async (req, res) => {
     try {
-        const { identificador, direccion, latitud, longitud, block_screen_saver, video_ids } = req.body;
+        const { identificador, direccion, latitud, longitud, block_screen_saver, modo_prueba, video_ids } = req.body;
         const totem = await Totem.findByPk(req.params.id);
         if (!totem) return res.status(404).json({ message: 'Totem no encontrado' });
 
@@ -192,7 +193,8 @@ exports.update = async (req, res) => {
             direccion: direccion || totem.direccion, 
             latitud: latitud !== undefined ? latitud : totem.latitud, 
             longitud: longitud !== undefined ? longitud : totem.longitud,
-            block_screen_saver: block_screen_saver !== undefined ? block_screen_saver : totem.block_screen_saver
+            block_screen_saver: block_screen_saver !== undefined ? block_screen_saver : totem.block_screen_saver,
+            modo_prueba: modo_prueba !== undefined ? modo_prueba : totem.modo_prueba
         });
 
         if (video_ids) {

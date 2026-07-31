@@ -43,6 +43,10 @@ const Totem = sequelize.define('Totem', {
         type: DataTypes.BOOLEAN,
         defaultValue: false
     },
+    modo_prueba: {
+        type: DataTypes.BOOLEAN,
+        defaultValue: false
+    },
     ultima_telemetria: {
         type: DataTypes.JSON,
         allowNull: true
