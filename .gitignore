@@ -42,3 +42,4 @@ postman_collection.json
 
 # Scratch files
 scratch/
+*.pem
