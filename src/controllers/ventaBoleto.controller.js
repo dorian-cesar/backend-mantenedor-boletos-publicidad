@@ -22,6 +22,7 @@ exports.registrarVenta = async (req, res) => {
         const status = payload_response.status || (payload_response.success ? 'success' : 'error');
         const operation = payload_response.operation || 'sell';
         const provider = payload_response.provider || 'unknown';
+        const tipo_pos = req.body.tipo_pos || payload_request.tipo_pos || 'pos'; // Por defecto 'pos', lee de la raiz o del payload
         const timestamp_operacion = payload_response.meta?.timestamp || new Date();
 
         const venta = await VentaBoleto.create({
@@ -33,6 +34,7 @@ exports.registrarVenta = async (req, res) => {
             status,
             operation,
             provider,
+            tipo_pos,
             timestamp_operacion
         });
         const { getIO } = require('../sockets/totem.sockets');

@@ -43,6 +43,10 @@ const VentaBoleto = sequelize.define('VentaBoleto', {
         type: DataTypes.STRING,
         allowNull: true
     },
+    tipo_pos: {
+        type: DataTypes.STRING,
+        allowNull: true
+    },
     timestamp_operacion: {
         type: DataTypes.DATE,
         allowNull: false,
