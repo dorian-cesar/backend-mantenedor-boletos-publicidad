@@ -93,15 +93,24 @@ exports.getAuditoria = async (req, res) => {
         // Calcular totales básicos para el reporte
         const total_ventas = ventas.length;
         const monto_total = ventas.reduce((sum, v) => sum + parseFloat(v.total_amount), 0);
-        const exitosas = ventas.filter(v => v.status === 'success').length;
+        const exitosas = ventas.filter(v => v.status === 'success' || v.status === 'aprobada' || v.status === 'APROBADA' || v.status === 'SUCCESS').length;
         const fallidas = total_ventas - exitosas;
+
+        const ventas_vpos = ventas.filter(v => (v.tipo_pos || '').toLowerCase() === 'vpos').length;
+        const ventas_pos = total_ventas - ventas_vpos;
+        const monto_vpos = ventas.filter(v => (v.tipo_pos || '').toLowerCase() === 'vpos').reduce((sum, v) => sum + parseFloat(v.total_amount), 0);
+        const monto_pos = monto_total - monto_vpos;
 
         res.json({
             summary: {
                 total_ventas,
                 monto_total,
                 exitosas,
-                fallidas
+                fallidas,
+                ventas_vpos,
+                ventas_pos,
+                monto_vpos,
+                monto_pos
             },
             ventas
         });
