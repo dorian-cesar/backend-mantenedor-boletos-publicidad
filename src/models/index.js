@@ -8,6 +8,7 @@ const ApiKey = require('./ApiKey');
 const VentaBoleto = require('./VentaBoleto');
 const InteraccionTotem = require('./InteraccionTotem');
 const UploadSession = require('./UploadSession');
+const Devolucion = require('./Devolucion');
 
 // Las asociaciones ya están definidas dentro de los archivos de los modelos,
 // pero para asegurarnos de que se carguen todas, las importamos aquí.
@@ -23,6 +24,12 @@ VentaBoleto.belongsTo(Totem, { foreignKey: 'totem_id', as: 'totem', onDelete: 'N
 Totem.hasMany(InteraccionTotem, { foreignKey: 'totem_id', as: 'interacciones', onDelete: 'NO ACTION' });
 InteraccionTotem.belongsTo(Totem, { foreignKey: 'totem_id', as: 'totem', onDelete: 'NO ACTION' });
 
+// Relaciones para Devolucion
+Totem.hasMany(Devolucion, { foreignKey: 'totem_id', as: 'devoluciones', onDelete: 'NO ACTION' });
+Devolucion.belongsTo(Totem, { foreignKey: 'totem_id', as: 'totem', onDelete: 'NO ACTION' });
+Usuario.hasMany(Devolucion, { foreignKey: 'usuario_id', as: 'devoluciones_gestionadas', onDelete: 'NO ACTION' });
+Devolucion.belongsTo(Usuario, { foreignKey: 'usuario_id', as: 'gestor', onDelete: 'NO ACTION' });
+
 module.exports = {
     Rol,
     Usuario,
@@ -33,5 +40,6 @@ module.exports = {
     ApiKey,
     VentaBoleto,
     InteraccionTotem,
-    UploadSession
+    UploadSession,
+    Devolucion
 };

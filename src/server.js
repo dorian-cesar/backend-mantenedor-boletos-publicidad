@@ -23,7 +23,7 @@ async function startServer() {
 
         // Seeding de Roles iniciales
         const Rol = require('./models/Rol');
-        const roles = ['ADMIN', 'USER', 'TOTEM'];
+        const roles = ['ADMIN', 'USER', 'TOTEM', 'FINANZAS'];
         for (const nombre of roles) {
             await Rol.findOrCreate({ where: { nombre } });
         }
