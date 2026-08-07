@@ -75,13 +75,21 @@ exports.updateStatus = async (req, res) => {
         devolucion.usuario_id = req.user.id; // Registrar quién tomó la decisión (usuario de Finanzas)
         await devolucion.save();
 
+        // Recargar la instancia con las asociaciones para que el frontend reciba el gestor
+        const devolucionActualizada = await Devolucion.findByPk(id, {
+            include: [
+                { model: Totem, as: 'totem', attributes: ['identificador', 'direccion'] },
+                { model: Usuario, as: 'gestor', attributes: ['nombre', 'email'] }
+            ]
+        });
+
         // Emitir actualización por WebSockets
         const io = req.app.get('io');
         if (io) {
-            io.emit('devolucion_actualizada', devolucion);
+            io.emit('devolucion_actualizada', devolucionActualizada);
         }
 
-        res.json({ message: 'Resolución guardada correctamente', devolucion });
+        res.json({ message: 'Resolución guardada correctamente', devolucion: devolucionActualizada });
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
