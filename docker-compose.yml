@@ -1,0 +1,25 @@
+version: '3.8'
+
+services:
+  backend:
+    build: .
+    container_name: boletos_backend
+    restart: always
+    ports:
+      - "3000:3000"
+    env_file:
+      - .env
+    volumes:
+      - ./uploads:/usr/src/app/uploads
+    # Dependencias como base de datos irían aquí si también las levantas con docker
+    # depends_on:
+    #   - db
+
+# Si quisieras levantar MySQL o Postgres localmente con Docker:
+#   db:
+#     image: mysql:8
+#     environment:
+#       MYSQL_ROOT_PASSWORD: root
+#       MYSQL_DATABASE: boletos_db
+#     ports:
+#       - "3306:3306"

@@ -27,9 +27,40 @@ const Devolucion = sequelize.define('Devolucion', {
         defaultValue: 'WEB',
         allowNull: false
     },
+    pais: {
+        type: DataTypes.STRING,
+        allowNull: false,
+        defaultValue: 'CL',
+        comment: 'País donde se realizó la compra (ej: CL, PY, PE)'
+    },
     motivo: {
         type: DataTypes.STRING,
         allowNull: true
+    },
+    datos_pasajero: {
+        type: DataTypes.JSON,
+        allowNull: true,
+        comment: 'Almacena nombre, documento, email, telefono, etc. del pasajero'
+    },
+    datos_boleto: {
+        type: DataTypes.JSON,
+        allowNull: true,
+        comment: 'Almacena origen, destino, fecha, asiento, etc. del boleto'
+    },
+    datos_bancarios: {
+        type: DataTypes.JSON,
+        allowNull: true,
+        comment: 'Almacena banco, beneficiario, tipo y numero de documento, numero de cuenta, etc.'
+    },
+    porcentaje_devolucion: {
+        type: DataTypes.DECIMAL(5, 2),
+        allowNull: true,
+        comment: 'Porcentaje aprobado a devolver (ej: 80.00, 100.00)'
+    },
+    resolucion_descripcion: {
+        type: DataTypes.TEXT,
+        allowNull: true,
+        comment: 'Justificación o nota agregada por Finanzas al aprobar/rechazar'
     },
     totem_id: {
         type: DataTypes.INTEGER,

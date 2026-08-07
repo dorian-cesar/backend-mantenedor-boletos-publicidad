@@ -11,6 +11,8 @@ const ventaBoletoRoutes = require('./ventaBoleto.routes');
 const interaccionTotemRoutes = require('./interaccionTotem.routes');
 const metricsRoutes = require('./metrics.routes');
 const devolucionRoutes = require('./devolucion.routes');
+const whatsappRoutes = require('./whatsappRoutes');
+const logOperacionRoutes = require('./logOperacion.routes');
 
 // IMPORTANTE: /videos/upload debe ir ANTES de /videos para que Express matchee correctamente
 router.use('/totems/metrics', metricsRoutes);
@@ -23,5 +25,7 @@ router.use('/api-keys', apiKeyRoutes);
 router.use('/ventas', ventaBoletoRoutes);
 router.use('/interacciones', interaccionTotemRoutes);
 router.use('/devoluciones', devolucionRoutes);
+router.use('/whatsapp', whatsappRoutes);
+router.use('/logs-operaciones', logOperacionRoutes);
 
 module.exports = router;

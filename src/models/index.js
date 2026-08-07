@@ -9,6 +9,8 @@ const VentaBoleto = require('./VentaBoleto');
 const InteraccionTotem = require('./InteraccionTotem');
 const UploadSession = require('./UploadSession');
 const Devolucion = require('./Devolucion');
+const WhatsappSession = require('./WhatsappSession');
+const LogOperacionBoleto = require('./LogOperacionBoleto');
 
 // Las asociaciones ya están definidas dentro de los archivos de los modelos,
 // pero para asegurarnos de que se carguen todas, las importamos aquí.
@@ -41,5 +43,7 @@ module.exports = {
     VentaBoleto,
     InteraccionTotem,
     UploadSession,
-    Devolucion
+    Devolucion,
+    WhatsappSession,
+    LogOperacionBoleto
 };

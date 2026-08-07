@@ -24,6 +24,7 @@
   "homepage": "https://github.com/dorian-cesar/backend-mantenedor-boletos-publicidad#readme",
   "dependencies": {
     "adm-zip": "^0.5.17",
+    "axios": "^1.19.0",
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
     "dotenv": "^17.4.2",
