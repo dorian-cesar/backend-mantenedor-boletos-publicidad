@@ -9,6 +9,18 @@ exports.create = async (req, res) => {
             return res.status(400).json({ message: 'Se requieren ticket_number y monto' });
         }
 
+        // Verificar si ya existe una solicitud para este boleto
+        const existente = await Devolucion.findOne({
+            where: { ticket_number }
+        });
+
+        if (existente) {
+            return res.status(400).json({
+                message: `Ya existe una solicitud de devolución registrada para el ticket N° ${ticket_number}. (Estado actual: ${existente.estado})`,
+                devolucion_existente: existente
+            });
+        }
+
         const nuevaDevolucion = await Devolucion.create({
             ticket_number,
             monto,
