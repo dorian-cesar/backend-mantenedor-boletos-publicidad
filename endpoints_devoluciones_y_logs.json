@@ -19,6 +19,7 @@
         "motivo": "Me equivoqué de fecha",
         "datos_pasajero": {
           "nombre": "Juan Pérez",
+          "tipo_documento": "CI",
           "documento": "1234567-8",
           "email": "juan.perez@example.com",
           "telefono": "+595912345678"
