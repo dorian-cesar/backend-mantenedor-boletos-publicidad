@@ -22,6 +22,12 @@ exports.create = async (req, res) => {
             estado: 'PENDIENTE'
         });
 
+        // Emitir evento por WebSockets para actualizar el dashboard en tiempo real
+        const io = req.app.get('io');
+        if (io) {
+            io.emit('nueva_devolucion', nuevaDevolucion);
+        }
+
         res.status(201).json({
             message: 'Devolución registrada exitosamente',
             devolucion: nuevaDevolucion
@@ -68,6 +74,12 @@ exports.updateStatus = async (req, res) => {
         
         devolucion.usuario_id = req.user.id; // Registrar quién tomó la decisión (usuario de Finanzas)
         await devolucion.save();
+
+        // Emitir actualización por WebSockets
+        const io = req.app.get('io');
+        if (io) {
+            io.emit('devolucion_actualizada', devolucion);
+        }
 
         res.json({ message: 'Resolución guardada correctamente', devolucion });
     } catch (error) {
