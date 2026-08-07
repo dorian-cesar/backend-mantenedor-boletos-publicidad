@@ -1,0 +1,106 @@
+{
+  "api_version": "1.0",
+  "base_url": "http://localhost:5000/api",
+  "endpoints": [
+    {
+      "name": "1. Crear Solicitud de Devolución (Desde el Totem o Web)",
+      "method": "POST",
+      "path": "/api/devoluciones",
+      "description": "Crea un caso de devolución. Lo consume el frontend (pasajero) para iniciar el trámite.",
+      "headers": {
+        "Authorization": "Bearer <token_del_usuario_o_totem>",
+        "Content-Type": "application/json"
+      },
+      "body_example": {
+        "ticket_number": "TK-987654321",
+        "monto": 15500.00,
+        "origen": "WEB",
+        "pais": "PY",
+        "motivo": "Me equivoqué de fecha",
+        "datos_pasajero": {
+          "nombre": "Juan Pérez",
+          "documento": "1234567-8",
+          "email": "juan.perez@example.com",
+          "telefono": "+595912345678"
+        },
+        "datos_boleto": {
+          "origen": "Asunción",
+          "destino": "Ciudad del Este",
+          "fecha_viaje": "2026-08-15T14:30:00.000Z",
+          "asiento": "12B",
+          "empresa": "Buses Sur"
+        },
+        "datos_bancarios": {
+          "banco": "Banco Familiar",
+          "tipo_cuenta": "Cuenta Corriente",
+          "numero_cuenta": "123456789",
+          "tipo_documento_beneficiario": "CI",
+          "documento_beneficiario": "1234567-8",
+          "nombre_beneficiario": "Juan Pérez"
+        }
+      }
+    },
+    {
+      "name": "2. Resolver Devolución (Desde el Mantenedor de Finanzas)",
+      "method": "PATCH",
+      "path": "/api/devoluciones/:id/estado",
+      "description": "Actualiza el estado de una devolución, asigna el porcentaje a devolver y registra el motivo de la decisión. Solo accesible por el rol FINANZAS o ADMIN.",
+      "headers": {
+        "Authorization": "Bearer <token_usuario_finanzas>",
+        "Content-Type": "application/json"
+      },
+      "body_example": {
+        "estado": "APROBADA",
+        "porcentaje_devolucion": 85.00,
+        "resolucion_descripcion": "Se descuenta 15% por políticas de cancelación tardía."
+      }
+    },
+    {
+      "name": "3. Guardar Log de Integración de Reservas (Desde Frontend)",
+      "method": "POST",
+      "path": "/api/logs-operaciones",
+      "description": "Guarda un registro de la comunicación (Éxito o Error) con el sistema de reservas externo (Ej. Delta).",
+      "headers": {
+        "Authorization": "Bearer <token_del_usuario>",
+        "Content-Type": "application/json"
+      },
+      "body_example_success": {
+        "ticket_number": "6095000",
+        "operacion": "CONSULTA",
+        "estado": "EXITO",
+        "pais": "PY",
+        "respuesta_integracion": {
+          "provider": "delta",
+          "operation": "findPassenger",
+          "success": true,
+          "status": "success",
+          "data": {
+            "passenger": {
+              "Doctip": "C",
+              "DocNro": "6095000",
+              "PasApe": "SANABRIA GALEANO",
+              "PasNom": "SUSAN MERCEDES",
+              "ExisteEnPN": "S"
+            }
+          }
+        }
+      },
+      "body_example_error": {
+        "ticket_number": "261077507",
+        "operacion": "CONSULTA",
+        "estado": "ERROR",
+        "pais": "PY",
+        "mensaje_error": "El pasajero no existe o no se encontraron coincidencias.",
+        "respuesta_integracion": {
+          "provider": "delta",
+          "operation": "findPassenger",
+          "success": true,
+          "status": "success",
+          "data": {
+            "passenger": null
+          }
+        }
+      }
+    }
+  ]
+}
