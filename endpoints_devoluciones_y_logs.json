@@ -27,6 +27,7 @@
         "datos_boleto": {
           "origen": "Asunción",
           "destino": "Ciudad del Este",
+          "fecha_compra": "2026-08-01T10:00:00.000Z",
           "fecha_viaje": "2026-08-15T14:30:00.000Z",
           "asiento": "12B",
           "empresa": "Buses Sur"
